@@ -77,7 +77,7 @@ function ProjectPage() {
 
       {/* Gallery */}
       <section className="mx-auto mt-20 max-w-7xl space-y-6 px-6">
-        {project.gallery.map((src, i) => (
+        {project.gallery.map((src: string, i: number) => (
           <div key={i} className={`overflow-hidden bg-muted ${i % 2 === 0 ? "aspect-[16/10]" : "grid gap-6 md:grid-cols-2 bg-transparent"}`}>
             {i % 2 === 0 ? (
               <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" width={1920} height={1200} className="h-full w-full object-cover" />
@@ -98,7 +98,7 @@ function ProjectPage() {
         <div>
           <p className="eyebrow">Palette</p>
           <div className="mt-6 grid grid-cols-4 gap-3">
-            {project.palette.map((c) => (
+            {project.palette.map((c: { name: string; hex: string }) => (
               <div key={c.hex}>
                 <div className="aspect-square w-full" style={{ backgroundColor: c.hex }} />
                 <p className="mt-2 text-xs">{c.name}</p>
@@ -110,7 +110,7 @@ function ProjectPage() {
         <div>
           <p className="eyebrow">Key materials</p>
           <ul className="mt-6 space-y-3 font-serif text-2xl">
-            {project.materials.map((m) => <li key={m} className="border-b border-border pb-3">{m}</li>)}
+            {project.materials.map((m: string) => <li key={m} className="border-b border-border pb-3">{m}</li>)}
           </ul>
         </div>
       </section>
