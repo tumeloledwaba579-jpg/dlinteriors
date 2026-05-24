@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Linkedin } from "lucide-react";
+import { useContactInfo } from "@/hooks/use-contact-info";
 
 export function Footer() {
+  const c = useContactInfo();
   return (
     <footer className="border-t border-border bg-card mt-24">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-4">
@@ -27,13 +29,13 @@ export function Footer() {
         <div>
           <p className="eyebrow mb-4">Get in touch</p>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>hello@dlinteriors.co.za</li>
-            <li>+27 11 000 0000</li>
-            <li>Johannesburg · Pretoria</li>
+            {c.email && <li>{c.email}</li>}
+            {c.phone && <li>{c.phone}</li>}
+            {c.address && <li>{c.address}</li>}
           </ul>
           <div className="mt-4 flex gap-3">
-            <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground"><Instagram size={18} /></a>
-            <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground"><Linkedin size={18} /></a>
+            {c.instagram && <a href={c.instagram} aria-label="Instagram" className="text-muted-foreground hover:text-foreground"><Instagram size={18} /></a>}
+            {c.pinterest && <a href={c.pinterest} aria-label="Pinterest" className="text-muted-foreground hover:text-foreground"><Linkedin size={18} /></a>}
           </div>
         </div>
       </div>

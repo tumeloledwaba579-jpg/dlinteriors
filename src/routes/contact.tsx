@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { useContactInfo } from "@/hooks/use-contact-info";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -27,6 +28,7 @@ const schema = z.object({
 });
 
 function ContactPage() {
+  const c = useContactInfo();
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -112,9 +114,9 @@ function ContactPage() {
           <div>
             <p className="eyebrow">Studio</p>
             <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-start gap-3"><Mail size={16} className="mt-0.5 text-primary" /> hello@dlinteriors.co.za</li>
-              <li className="flex items-start gap-3"><Phone size={16} className="mt-0.5 text-primary" /> +27 11 000 0000</li>
-              <li className="flex items-start gap-3"><MapPin size={16} className="mt-0.5 text-primary" /> By appointment · Johannesburg & Pretoria</li>
+              {c.email && <li className="flex items-start gap-3"><Mail size={16} className="mt-0.5 text-primary" /> {c.email}</li>}
+              {c.phone && <li className="flex items-start gap-3"><Phone size={16} className="mt-0.5 text-primary" /> {c.phone}</li>}
+              {c.address && <li className="flex items-start gap-3"><MapPin size={16} className="mt-0.5 text-primary" /> {c.address}</li>}
             </ul>
           </div>
 
@@ -130,8 +132,8 @@ function ContactPage() {
           <div className="border-t border-border pt-6">
             <p className="eyebrow">Follow</p>
             <div className="mt-4 flex gap-4">
-              <a href="#" aria-label="Instagram" className="text-foreground/80 hover:text-foreground"><Instagram size={20} /></a>
-              <a href="#" aria-label="LinkedIn" className="text-foreground/80 hover:text-foreground"><Linkedin size={20} /></a>
+              {c.instagram && <a href={c.instagram} aria-label="Instagram" className="text-foreground/80 hover:text-foreground"><Instagram size={20} /></a>}
+              {c.pinterest && <a href={c.pinterest} aria-label="Pinterest" className="text-foreground/80 hover:text-foreground"><Linkedin size={20} /></a>}
             </div>
           </div>
         </aside>

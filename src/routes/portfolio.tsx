@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { projects } from "@/lib/projects";
+import { useEffect, useState } from "react";
+import { projects as staticProjects } from "@/lib/projects";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -16,6 +18,12 @@ export const Route = createFileRoute("/portfolio")({
 });
 
 function PortfolioPage() {
+  const [items, setItems] = useState(staticProjects.map(p => ({ slug: p.slug, title: p.title, location: p.location, style: p.style, space: p.space, year: p.year, image: p.image })));
+  useEffect(() => {
+    supabase.from("projects").select("slug,title,location,style,space,year,cover_image,sort_order").eq("published", true).order("sort_order").then(({ data }) => {
+      if (data && data.length > 0) setItems(data.map(d => ({ slug: d.slug, title: d.title, location: d.location, style: d.style, space: d.space, year: d.year, image: d.cover_image ?? "" })));
+    });
+  }, []);
   return (
     <div className="pt-32 md:pt-40">
       <header className="mx-auto max-w-7xl px-6">
@@ -30,7 +38,7 @@ function PortfolioPage() {
 
       <div className="mx-auto mt-16 max-w-7xl px-6 pb-12">
         <div className="grid grid-cols-1 gap-x-6 gap-y-16 md:grid-cols-2">
-          {projects.map((p, i) => (
+          {items.map((p, i) => (
             <Link
               key={p.slug}
               to="/portfolio/$slug"

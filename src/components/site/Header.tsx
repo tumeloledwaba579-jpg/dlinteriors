@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -11,6 +12,7 @@ const nav = [
 ] as const;
 
 export function Header() {
+  const { user, isAdmin } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -49,12 +51,19 @@ export function Header() {
           ))}
         </nav>
 
-        <Link
-          to="/contact"
-          className="hidden rounded-full border border-foreground/80 px-5 py-2 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:bg-foreground hover:text-background md:inline-block"
-        >
-          Book Consultation
-        </Link>
+        <div className="hidden md:flex items-center gap-3">
+          {user && (
+            <Link to={isAdmin ? "/admin" : "/login"} className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground">
+              {isAdmin ? "Admin" : "Account"}
+            </Link>
+          )}
+          <Link
+            to="/contact"
+            className="rounded-full border border-foreground/80 px-5 py-2 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:bg-foreground hover:text-background"
+          >
+            Book Consultation
+          </Link>
+        </div>
 
         <button
           aria-label="Toggle menu"
