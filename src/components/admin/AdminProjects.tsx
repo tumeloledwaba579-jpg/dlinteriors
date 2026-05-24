@@ -22,7 +22,7 @@ export function AdminProjects() {
 
   const load = async () => {
     const { data } = await supabase.from("projects").select("*").order("sort_order").order("created_at", { ascending: false });
-    setItems((data as Project[]) ?? []);
+    setItems(((data as unknown) as Project[]) ?? []);
   };
   useEffect(() => { load(); }, []);
 
@@ -41,7 +41,7 @@ export function AdminProjects() {
     } else {
       const { data, error } = await supabase.from("projects").insert(rest).select().single();
       if (error) return alert(error.message);
-      setEditing(data as Project);
+      setEditing((data as unknown) as Project);
       return load();
     }
     setEditing(null); load();
