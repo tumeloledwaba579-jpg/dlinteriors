@@ -30,9 +30,9 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 md:py-6">
-        <Link to="/" className="flex items-baseline gap-2" onClick={() => setOpen(false)}>
-          <span className="font-serif text-2xl tracking-tight">dl</span>
-          <span className="eyebrow">interiors</span>
+        <Link to="/" className="flex items-center gap-2 rounded-full bg-foreground px-5 py-2 text-background" onClick={() => setOpen(false)}>
+          <span className="font-serif text-2xl tracking-tight leading-none">dl</span>
+          <span className="eyebrow text-background/90">interiors</span>
         </Link>
 
         <nav className="hidden items-center gap-10 md:flex">
