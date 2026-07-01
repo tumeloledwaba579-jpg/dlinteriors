@@ -28,10 +28,11 @@ export function Header() {
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled || open
           ? "bg-background/90 backdrop-blur-md border-b border-border"
-          : "bg-transparent"
+          : "bg-gray-50"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-6 py-5 md:py-6 flex items-end justify-between bg-gray-50">
+      <div className="mx-auto max-w-7xl px-6 py-5 md:py-6 flex items-center justify-between">
+
         <Link to="/" className="flex items-baseline gap-2" onClick={() => setOpen(false)}>
           <span className="font-serif text-2xl tracking-tight">dl</span>
           <span className="eyebrow">interiors</span>
