@@ -52,11 +52,12 @@ export function Header() {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          {user && (
-            <Link to={isAdmin ? "/admin" : "/login"} className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground">
-              {isAdmin ? "Admin" : "Account"}
-            </Link>
-          )}
+          <Link
+            to={user ? (isAdmin ? "/admin" : "/admin") : "/login"}
+            className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+          >
+            {user ? (isAdmin ? "Admin" : "Account") : "Sign in"}
+          </Link>
           <Link
             to="/contact"
             className="rounded-full border border-foreground/80 px-5 py-2 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:bg-foreground hover:text-background"
