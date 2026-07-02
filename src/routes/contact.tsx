@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { useContactInfo } from "@/hooks/use-contact-info";
+import { useSiteContent } from "@/lib/site-content";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -29,6 +30,9 @@ const schema = z.object({
 
 function ContactPage() {
   const c = useContactInfo();
+  const header = useSiteContent("contact.header");
+  const opts = useSiteContent("contact.options");
+  const next = useSiteContent("contact.nextSteps");
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -37,9 +41,9 @@ function ContactPage() {
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
     const result = schema.safeParse(data);
     if (!result.success) {
-      const next: Record<string, string> = {};
-      for (const issue of result.error.issues) next[String(issue.path[0])] = issue.message;
-      setErrors(next);
+      const nx: Record<string, string> = {};
+      for (const issue of result.error.issues) nx[String(issue.path[0])] = issue.message;
+      setErrors(nx);
       return;
     }
     setErrors({});
@@ -49,25 +53,20 @@ function ContactPage() {
   return (
     <div className="pt-32 md:pt-40">
       <header className="mx-auto max-w-7xl px-6">
-        <p className="eyebrow">Contact</p>
+        <p className="eyebrow">{header.eyebrow}</p>
         <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[1.05] md:text-7xl">
-          Tell us about your <em className="italic text-primary">home.</em>
+          {header.headingLead} <em className="italic text-primary">{header.headingItalic}</em>
         </h1>
-        <p className="mt-6 max-w-xl text-base text-muted-foreground">
-          The more we know, the more useful our first conversation will be. We respond to every enquiry within one working day.
-        </p>
+        <p className="mt-6 max-w-xl text-base text-muted-foreground">{header.intro}</p>
       </header>
 
       <section className="mx-auto mt-16 grid max-w-7xl gap-12 px-6 md:grid-cols-12 md:gap-20">
-        {/* Form */}
         <div className="md:col-span-7">
           {submitted ? (
             <div className="border border-border bg-card p-10 text-center">
               <p className="eyebrow">Thank you</p>
               <h2 className="mt-3 font-serif text-3xl">Your message is on its way.</h2>
-              <p className="mt-4 text-sm text-muted-foreground">
-                We'll be in touch within one working day to set up your consultation.
-              </p>
+              <p className="mt-4 text-sm text-muted-foreground">We'll be in touch within one working day to set up your consultation.</p>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="space-y-6" noValidate>
@@ -77,39 +76,20 @@ function ContactPage() {
                 <Field label="Phone (optional)" name="phone" type="tel" error={errors.phone} />
               </div>
               <div className="grid gap-6 md:grid-cols-2">
-                <SelectField
-                  label="Project type"
-                  name="projectType"
-                  error={errors.projectType}
-                  options={["Full Home", "Kitchen", "Bedroom / Suite", "Bathroom", "Living Areas", "Styling Refresh", "Other"]}
-                  required
-                />
-                <SelectField
-                  label="Budget (optional)"
-                  name="budget"
-                  error={errors.budget}
-                  options={["Under R100k", "R100k — R300k", "R300k — R750k", "R750k — R1.5m", "R1.5m+"]}
-                />
+                <SelectField label="Project type" name="projectType" error={errors.projectType} options={opts.projectTypes} required />
+                <SelectField label="Budget (optional)" name="budget" error={errors.budget} options={opts.budgets} />
               </div>
               <div>
                 <label className="eyebrow block">Tell us about your project *</label>
-                <textarea
-                  name="message"
-                  rows={6}
-                  className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground"
-                  placeholder="A few words about your home, what you'd like to change, and your timeline."
-                />
+                <textarea name="message" rows={6} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" placeholder="A few words about your home, what you'd like to change, and your timeline." />
                 {errors.message && <p className="mt-2 text-xs text-destructive">{errors.message}</p>}
               </div>
-              <button type="submit" className="rounded-full bg-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-background hover:bg-primary transition-colors">
-                Send enquiry
-              </button>
+              <button type="submit" className="rounded-full bg-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-background hover:bg-primary transition-colors">Send enquiry</button>
               <p className="text-xs text-muted-foreground">We typically reply within one working day.</p>
             </form>
           )}
         </div>
 
-        {/* Sidebar */}
         <aside className="md:col-span-4 md:col-start-9 space-y-10">
           <div>
             <p className="eyebrow">Studio</p>
@@ -121,11 +101,11 @@ function ContactPage() {
           </div>
 
           <div className="border-t border-border pt-6">
-            <p className="eyebrow">What happens next</p>
+            <p className="eyebrow">{next.eyebrow}</p>
             <ol className="mt-4 space-y-4 text-sm">
-              <li><span className="font-serif text-primary mr-2">01</span> A short reply within one working day.</li>
-              <li><span className="font-serif text-primary mr-2">02</span> A 45-minute discovery call or studio visit.</li>
-              <li><span className="font-serif text-primary mr-2">03</span> A tailored proposal for your project.</li>
+              {next.steps.map((s, i) => (
+                <li key={i}><span className="font-serif text-primary mr-2">{String(i + 1).padStart(2, "0")}</span>{s}</li>
+              ))}
             </ol>
           </div>
 
@@ -146,11 +126,7 @@ function Field({ label, name, type = "text", error, required }: { label: string;
   return (
     <div>
       <label className="eyebrow block">{label}{required && " *"}</label>
-      <input
-        name={name}
-        type={type}
-        className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground"
-      />
+      <input name={name} type={type} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" />
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
@@ -160,11 +136,7 @@ function SelectField({ label, name, options, error, required }: { label: string;
   return (
     <div>
       <label className="eyebrow block">{label}{required && " *"}</label>
-      <select
-        name={name}
-        defaultValue=""
-        className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground"
-      >
+      <select name={name} defaultValue="" className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground">
         <option value="" disabled>Please select</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useSiteContent } from "@/lib/site-content";
+
 
 const nav = [
   { to: "/", label: "Home" },
@@ -13,6 +15,7 @@ const nav = [
 
 export function Header() {
   const { user, isAdmin } = useAuth();
+  const branding = useSiteContent("site.branding");
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -34,9 +37,10 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-6 py-5 md:py-6 flex items-center justify-between">
 
         <Link to="/" className="flex items-baseline gap-2" onClick={() => setOpen(false)}>
-          <span className="font-serif text-2xl tracking-tight">dl</span>
-          <span className="eyebrow">interiors</span>
+          <span className="font-serif text-2xl tracking-tight">{branding.studioMark}</span>
+          <span className="eyebrow">{branding.studioName}</span>
         </Link>
+
 
         <nav className="hidden items-center gap-10 md:flex">
           {nav.map((item) => (
@@ -63,8 +67,9 @@ export function Header() {
             to="/contact"
             className="rounded-full border border-foreground/80 px-5 py-2 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:bg-foreground hover:text-background"
           >
-            Book Consultation
+            {branding.headerCta}
           </Link>
+
         </div>
 
         <button
@@ -94,8 +99,9 @@ export function Header() {
               onClick={() => setOpen(false)}
               className="mt-2 inline-block rounded-full border border-foreground/80 px-5 py-3 text-center text-xs uppercase tracking-[0.18em]"
             >
-              Book Consultation
+              {branding.headerCta}
             </Link>
+
           </nav>
         </div>
       )}
