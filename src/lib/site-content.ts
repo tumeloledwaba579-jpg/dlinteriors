@@ -314,17 +314,15 @@ const listeners = new Set<() => void>();
 async function load() {
   if (cache) return;
   if (!pending) {
-    pending = supabase
-      .from("site_content")
-      .select("section,data")
-      .then(({ data }) => {
-        const next: Record<string, unknown> = {};
-        for (const row of (data as { section: string; data: unknown }[] | null) ?? []) {
-          next[row.section] = row.data;
-        }
-        cache = next;
-        listeners.forEach((l) => l());
-      });
+    pending = (async () => {
+      const { data } = await supabase.from("site_content").select("section,data");
+      const next: Record<string, unknown> = {};
+      for (const row of (data as { section: string; data: unknown }[] | null) ?? []) {
+        next[row.section] = row.data;
+      }
+      cache = next;
+      listeners.forEach((l) => l());
+    })();
   }
   await pending;
 }
