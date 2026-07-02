@@ -6,18 +6,20 @@ import { AdminProjects } from "@/components/admin/AdminProjects";
 import { AdminServices } from "@/components/admin/AdminServices";
 import { AdminTestimonials } from "@/components/admin/AdminTestimonials";
 import { AdminContact } from "@/components/admin/AdminContact";
+import { AdminPages } from "@/components/admin/AdminPages";
+
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — dl interiors" }, { name: "robots", content: "noindex" }] }),
   component: AdminPage,
 });
 
-type Tab = "projects" | "services" | "testimonials" | "contact";
+type Tab = "pages" | "projects" | "services" | "testimonials" | "contact";
 
 function AdminPage() {
   const nav = useNavigate();
   const { user, isAdmin, loading } = useAuth();
-  const [tab, setTab] = useState<Tab>("projects");
+  const [tab, setTab] = useState<Tab>("pages");
   const [grantMsg, setGrantMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,6 +66,7 @@ function AdminPage() {
   }
 
   const tabs: { id: Tab; label: string }[] = [
+    { id: "pages", label: "Pages" },
     { id: "projects", label: "Projects" },
     { id: "services", label: "Services" },
     { id: "testimonials", label: "Testimonials" },
@@ -97,6 +100,7 @@ function AdminPage() {
         </nav>
 
         <div className="mt-10">
+          {tab === "pages" && <AdminPages />}
           {tab === "projects" && <AdminProjects />}
           {tab === "services" && <AdminServices />}
           {tab === "testimonials" && <AdminTestimonials />}

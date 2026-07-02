@@ -1,21 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Linkedin } from "lucide-react";
 import { useContactInfo } from "@/hooks/use-contact-info";
+import { useSiteContent } from "@/lib/site-content";
 
 export function Footer() {
   const c = useContactInfo();
+  const b = useSiteContent("site.branding");
   return (
     <footer className="border-t border-border bg-card mt-24">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-baseline gap-2">
-            <span className="font-serif text-3xl">dl</span>
-            <span className="eyebrow">interiors</span>
+            <span className="font-serif text-3xl">{b.studioMark}</span>
+            <span className="eyebrow">{b.studioName}</span>
           </div>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            A residential interior design studio based between Johannesburg and Pretoria, shaping
-            warm, considered homes across South Africa.
-          </p>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">{b.footerAbout}</p>
         </div>
         <div>
           <p className="eyebrow mb-4">Studio</p>
@@ -41,8 +40,8 @@ export function Footer() {
       </div>
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-6 py-6 text-xs text-muted-foreground md:flex-row">
-          <p>© {new Date().getFullYear()} dl interiors. All rights reserved.</p>
-          <p>Designed in Johannesburg.</p>
+          <p>© {new Date().getFullYear()} {b.studioMark} {b.studioName}. All rights reserved.</p>
+          <p>{b.footerCredit}</p>
         </div>
       </div>
     </footer>
