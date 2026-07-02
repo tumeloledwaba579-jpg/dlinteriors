@@ -66,6 +66,7 @@ function AdminPage() {
   }
 
   const tabs: { id: Tab; label: string }[] = [
+    { id: "pages", label: "Pages" },
     { id: "projects", label: "Projects" },
     { id: "services", label: "Services" },
     { id: "testimonials", label: "Testimonials" },
@@ -99,6 +100,7 @@ function AdminPage() {
         </nav>
 
         <div className="mt-10">
+          {tab === "pages" && <AdminPages />}
           {tab === "projects" && <AdminProjects />}
           {tab === "services" && <AdminServices />}
           {tab === "testimonials" && <AdminTestimonials />}
