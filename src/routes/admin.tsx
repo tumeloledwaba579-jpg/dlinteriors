@@ -73,7 +73,9 @@ function AdminPage() {
     { id: "services", label: "Services" },
     { id: "testimonials", label: "Testimonials" },
     { id: "contact", label: "Contact info" },
+    { id: "inquiries", label: "Inquiries" },
   ];
+
 
   return (
     <div className="min-h-screen pt-32 pb-24 px-6 bg-background">
@@ -107,6 +109,8 @@ function AdminPage() {
           {tab === "services" && <AdminServices />}
           {tab === "testimonials" && <AdminTestimonials />}
           {tab === "contact" && <AdminContact />}
+          {tab === "inquiries" && <AdminInquiries />}
+
         </div>
       </div>
     </div>
