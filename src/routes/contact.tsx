@@ -4,6 +4,8 @@ import { z } from "zod";
 import { Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { useContactInfo } from "@/hooks/use-contact-info";
 import { useSiteContent } from "@/lib/site-content";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -34,10 +36,13 @@ function ContactPage() {
   const opts = useSiteContent("contact.options");
   const next = useSiteContent("contact.nextSteps");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitError(null);
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
     const result = schema.safeParse(data);
     if (!result.success) {
@@ -47,8 +52,24 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setSubmitting(true);
+    const v = result.data;
+    const { error } = await supabase.from("contact_submissions").insert({
+      name: v.name,
+      email: v.email,
+      phone: v.phone || null,
+      project_type: v.projectType,
+      budget: v.budget || null,
+      message: v.message,
+    });
+    setSubmitting(false);
+    if (error) {
+      setSubmitError("Sorry — we couldn't send your message. Please try again or email us directly.");
+      return;
+    }
     setSubmitted(true);
   };
+
 
   return (
     <div className="pt-32 md:pt-40">
