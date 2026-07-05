@@ -4,6 +4,8 @@ import { z } from "zod";
 import { Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { useContactInfo } from "@/hooks/use-contact-info";
 import { useSiteContent } from "@/lib/site-content";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -34,10 +36,13 @@ function ContactPage() {
   const opts = useSiteContent("contact.options");
   const next = useSiteContent("contact.nextSteps");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitError(null);
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
     const result = schema.safeParse(data);
     if (!result.success) {
@@ -47,8 +52,24 @@ function ContactPage() {
       return;
     }
     setErrors({});
+    setSubmitting(true);
+    const v = result.data;
+    const { error } = await supabase.from("contact_submissions").insert({
+      name: v.name,
+      email: v.email,
+      phone: v.phone || null,
+      project_type: v.projectType,
+      budget: v.budget || null,
+      message: v.message,
+    });
+    setSubmitting(false);
+    if (error) {
+      setSubmitError("Sorry — we couldn't send your message. Please try again or email us directly.");
+      return;
+    }
     setSubmitted(true);
   };
+
 
   return (
     <div className="pt-32 md:pt-40">
@@ -84,11 +105,15 @@ function ContactPage() {
                 <textarea name="message" rows={6} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" placeholder="A few words about your home, what you'd like to change, and your timeline." />
                 {errors.message && <p className="mt-2 text-xs text-destructive">{errors.message}</p>}
               </div>
-              <button type="submit" className="rounded-full bg-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-background hover:bg-primary transition-colors">Send enquiry</button>
+              <button type="submit" disabled={submitting} className="rounded-full bg-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-background hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                {submitting ? "Sending…" : "Send enquiry"}
+              </button>
+              {submitError && <p className="text-xs text-destructive">{submitError}</p>}
               <p className="text-xs text-muted-foreground">We typically reply within one working day.</p>
             </form>
           )}
         </div>
+
 
         <aside className="md:col-span-4 md:col-start-9 space-y-10">
           <div>

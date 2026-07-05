@@ -1,63 +1,55 @@
+## Finishing touches
 
-## Goal
-Every piece of text and imagery visible on the public site should be editable from `/admin`. Today only Projects, Services, Testimonials, and Contact info are. The Home, About, Services, and Contact pages still contain hardcoded copy, images, and lists.
+A quick walkthrough of the site + admin surfaced these gaps. Grouped by priority so you can pick what to ship.
 
-## What becomes editable
+### 1. Brand & metadata (high impact, low effort)
+- Add a real **favicon + apple-touch-icon** (currently the default Lovable icon shows in tabs).
+- Add a proper **og:image** on the homepage and About/Services/Contact leaves (social share currently has none, so previews are blank).
+- Wire the studio name from `site.branding` into the root `<title>` / og tags so renaming the studio in admin updates browser tabs too.
+- Generate `robots.txt` allow + confirm `sitemap.xml` includes About, Services, Contact, and portfolio detail routes.
 
-**Home page**
-- Hero: eyebrow, title (with italic word), tagline, primary CTA label, phone CTA label + tel, background image
-- Profile: eyebrow, heading, 3 body paragraphs, portrait image, "more about the studio" link label
-- Portfolio Categories section: eyebrow, heading, intro, and the 6 category cards (title, tag, image)
-- Services teaser: eyebrow, heading, intro (the 8 service cards will be pulled from the existing Services admin — one source of truth)
-- Contact CTA: eyebrow, heading, body, CTA labels + phone
+### 2. Contact form actually works
+Right now the form on `/contact` just shows a thank-you; submissions are lost.
+- New `contact_submissions` table (name, email, phone, project_type, budget, message, created_at) with admin-only read, public insert.
+- Store the submission on submit, keep the thank-you state.
+- New **"Inquiries"** tab in `/admin` to view / mark-read / delete leads.
+- Optional: email notification via a public API route + Resend (needs a `RESEND_API_KEY` secret — I'll ask before adding).
 
-**About page**
-- Intro heading + intro paragraph
-- Founder section: portrait, heading, 2 body paragraphs, credentials list
-- Process: 5 numbered steps (title + body)
-- Pull-quote image + quote text
-- Closing CTA heading + button label
+### 3. Image & performance polish
+- Add `loading="lazy"` + `decoding="async"` to all non-hero `<img>` tags (hero stays eager).
+- Add explicit `width`/`height` where missing to prevent layout shift.
+- Compress / swap the hero to a `<picture>` with a mobile crop (the current hero image is heavy on phones).
+- Add a subtle skeleton/placeholder for portfolio + category cards while images load.
 
-**Services page**
-- Page heading + intro
-- 6 service cards (icon key, title, body, "ideal for", investment) — or reuse the Services admin table
-- 5-phase timeline (phase + duration)
-- Closing CTA eyebrow/heading/body/button label
+### 4. Accessibility
+- Give every decorative image `alt=""` and every meaningful image a real alt (some currently say "" or reuse the title).
+- Ensure the header nav has a visible focus ring and the mobile menu traps focus / closes on Esc.
+- Contrast check on the hero overlay text and the muted-foreground body copy.
+- Add `aria-current="page"` to the active nav link.
 
-**Contact page**
-- Page heading + intro
-- Project type options list, Budget options list
-- Sidebar: "What happens next" 3 steps
+### 5. Admin UX
+- Replace the browser `alert()` / `confirm()` calls with the existing `sonner` toast + a small confirm dialog.
+- Add a **"Preview"** link next to each Pages sub-tab that opens the corresponding public page in a new tab.
+- Show a "last saved" timestamp per section.
+- Add **drag-to-reorder** (or up/down arrows) for services, testimonials, categories, process steps — currently only numeric `sort_order` inputs.
+- Add an **"Invite admin"** flow: an existing admin can grant the role to another signed-in user by email (uses `has_role` + a small server function).
 
-**Sitewide**
-- Studio name in header, header CTA label, footer copy
+### 6. 404 / error / loading states
+- The root `NotFoundComponent` exists but leaf routes (portfolio/[slug]) fall through to it silently — add a per-route `notFoundComponent` that says "Project not found" with a link back to portfolio.
+- Add a `pendingComponent` (small skeleton) on portfolio + services so navigation doesn't flash blank.
 
-## Approach
+### 7. Small visual bugs to sweep
+- Header: mobile hamburger + slide-in menu (currently nav is desktop-only below a certain width).
+- Footer: year should be dynamic (`new Date().getFullYear()`).
+- Portfolio detail: back-to-portfolio link.
+- Consistent button sizing — a couple of CTAs are `py-3` vs `py-3.5`.
 
-Add a single `site_content` table keyed by `section` (text PK) storing a JSON `data` blob per section — one row per logical block (e.g. `home.hero`, `home.profile`, `home.categories`, `home.contact_cta`, `about.intro`, `about.founder`, `about.process`, `about.quote`, `about.cta`, `services.header`, `services.cards`, `services.timeline`, `services.cta`, `contact.header`, `contact.options`, `contact.next_steps`, `site.branding`). Public read for all rows, admin-only write.
+### Out of scope unless you ask
+- Blog / journal
+- Multi-language
+- Analytics beyond what Lovable already provides
+- Full CMS-editable navigation (menu is currently fixed)
 
-Seed rows with the current hardcoded content so nothing visually changes on first load.
+---
 
-Add a typed helper `useSiteContent(section)` (React Query) that returns the parsed JSON with the seeded defaults as fallback while loading.
-
-Rewrite the public pages to read from those hooks instead of module-level constants. Images use the existing `ImageUpload` (site-assets bucket) or fall back to bundled defaults.
-
-Extend `/admin` with a new **"Pages"** tab containing sub-tabs (Home, About, Services page, Contact page, Branding). Each sub-tab is a form built with the existing `Card / Input / Textarea / ImageUpload / Btn` primitives — repeatable rows for lists (categories, process steps, timeline, credentials, options, next-steps). Save writes the whole JSON blob back to its row.
-
-Services-page cards and homepage services teaser both read from the existing `services` table (with a "show on home" flag added) so the user edits service copy in one place.
-
-## Technical notes
-- New migration: `site_content(section text pk, data jsonb, updated_at)` with GRANTs, RLS (`select` for anon+authenticated, `insert/update/delete` for admins via `has_role`), `updated_at` trigger. Seed with `INSERT ... ON CONFLICT DO NOTHING` in a follow-up insert step.
-- Add `show_on_home boolean default false` to `services` (optional; only if user wants the homepage teaser tied to the same table — otherwise store the 8-item teaser as its own `home.services_teaser` blob).
-- No public route becomes auth-gated; loaders stay public.
-- `useSiteContent` uses TanStack Query with a per-section key; falls back to hardcoded defaults so SSR and cold loads never blank.
-- New admin components: `AdminPages.tsx` (tab shell) + one component per section form. All under `src/components/admin/pages/`.
-- Icon fields (Services page cards) become a small select of allowed lucide icon keys.
-
-## Out of scope
-- Contact form submission storage (form currently just shows a thank-you).
-- Rich-text editing — plain textareas for now.
-- Reordering via drag-and-drop — numeric `sort_order` inputs where needed.
-
-## Question before I build
-Do you want the homepage services teaser and the Services page cards to be **one shared list** (edit once, appears on both — I'd add a "show on home" toggle to each), or kept as **two separate editable blocks** so you can word them differently?
+**Which of these should I do?** A safe default first pass would be **1, 2, 4, 6, and 7** — the user-facing polish + working contact form. **3** and **5** are worth a follow-up round. Let me know which groups to ship (or "all") and whether to add Resend for contact-form emails.

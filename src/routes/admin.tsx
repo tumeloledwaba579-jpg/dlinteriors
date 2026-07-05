@@ -7,6 +7,8 @@ import { AdminServices } from "@/components/admin/AdminServices";
 import { AdminTestimonials } from "@/components/admin/AdminTestimonials";
 import { AdminContact } from "@/components/admin/AdminContact";
 import { AdminPages } from "@/components/admin/AdminPages";
+import { AdminInquiries } from "@/components/admin/AdminInquiries";
+
 
 
 export const Route = createFileRoute("/admin")({
@@ -14,7 +16,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "pages" | "projects" | "services" | "testimonials" | "contact";
+type Tab = "pages" | "projects" | "services" | "testimonials" | "contact" | "inquiries";
 
 function AdminPage() {
   const nav = useNavigate();
@@ -71,7 +73,9 @@ function AdminPage() {
     { id: "services", label: "Services" },
     { id: "testimonials", label: "Testimonials" },
     { id: "contact", label: "Contact info" },
+    { id: "inquiries", label: "Inquiries" },
   ];
+
 
   return (
     <div className="min-h-screen pt-32 pb-24 px-6 bg-background">
@@ -105,6 +109,8 @@ function AdminPage() {
           {tab === "services" && <AdminServices />}
           {tab === "testimonials" && <AdminTestimonials />}
           {tab === "contact" && <AdminContact />}
+          {tab === "inquiries" && <AdminInquiries />}
+
         </div>
       </div>
     </div>

@@ -26,6 +26,14 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
@@ -42,13 +50,13 @@ export function Header() {
         </Link>
 
 
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav className="hidden items-center gap-10 md:flex" aria-label="Primary">
           {nav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="text-sm tracking-wide text-foreground/80 transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className="text-sm tracking-wide text-foreground/80 transition-colors hover:text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+              activeProps={{ className: "text-foreground", "aria-current": "page" }}
               activeOptions={{ exact: item.to === "/" }}
             >
               {item.label}
@@ -59,10 +67,11 @@ export function Header() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             to={user ? (isAdmin ? "/admin" : "/admin") : "/login"}
-            className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+            className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
           >
             {user ? (isAdmin ? "Admin" : "Account") : "Sign in"}
           </Link>
+
           <Link
             to="/contact"
             className="rounded-full border border-foreground/80 px-5 py-2 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:bg-foreground hover:text-background"
