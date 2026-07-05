@@ -18,7 +18,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
         { property: "og:description", content: p?.narrative ?? "" },
         { property: "og:url", content: `/portfolio/${params.slug}` },
         { property: "og:type", content: "article" },
-        ...(p?.image ? [{ property: "og:image", content: p.image }] : []),
+        ...(p?.image ? [{ property: "og:image", content: p.image }, { name: "twitter:image", content: p.image }] : []),
       ],
       links: [{ rel: "canonical", href: `/portfolio/${params.slug}` }],
       scripts: p ? [{
@@ -34,8 +34,30 @@ export const Route = createFileRoute("/portfolio/$slug")({
       }] : [],
     };
   },
+  notFoundComponent: () => (
+    <div className="min-h-[70vh] flex items-center justify-center px-6 pt-32">
+      <div className="max-w-md text-center">
+        <p className="eyebrow">404</p>
+        <h1 className="mt-4 font-serif text-4xl">Project not found</h1>
+        <p className="mt-3 text-sm text-muted-foreground">This project may have moved or been retired.</p>
+        <Link to="/portfolio" className="mt-8 inline-flex items-center gap-2 rounded-full border border-foreground/80 px-6 py-3 text-xs uppercase tracking-[0.18em] hover:bg-foreground hover:text-background transition-colors">
+          <ArrowLeft size={14} /> Back to portfolio
+        </Link>
+      </div>
+    </div>
+  ),
+  errorComponent: () => (
+    <div className="min-h-[70vh] flex items-center justify-center px-6 pt-32">
+      <div className="max-w-md text-center">
+        <h1 className="font-serif text-3xl">We couldn't load this project</h1>
+        <p className="mt-3 text-sm text-muted-foreground">Please try again in a moment.</p>
+        <Link to="/portfolio" className="mt-6 inline-block rounded-full border border-foreground/80 px-6 py-3 text-xs uppercase tracking-[0.18em]">Back to portfolio</Link>
+      </div>
+    </div>
+  ),
   component: ProjectPage,
 });
+
 
 function ProjectPage() {
   const { project } = Route.useLoaderData();
