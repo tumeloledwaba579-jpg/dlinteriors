@@ -43,29 +43,29 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 pt-32 pb-20 bg-background">
+    <div className="min-h-dvh flex items-center justify-center px-6 pt-32 pb-20 bg-background">
       <div className="w-full max-w-md border border-border bg-card p-10">
         <p className="eyebrow">Studio Admin</p>
         <h1 className="mt-3 font-serif text-4xl">{mode === "signin" ? "Sign in" : "Create account"}</h1>
         <form onSubmit={submit} className="mt-8 space-y-5">
           <div>
-            <label className="eyebrow block">Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" />
+            <label htmlFor="login-email" className="eyebrow block">Email</label>
+            <input id="login-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+              className="mt-2 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground" />
           </div>
           <div>
-            <label className="eyebrow block">Password</label>
-            <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" />
+            <label htmlFor="login-password" className="eyebrow block">Password</label>
+            <input id="login-password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+              className="mt-2 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground" />
           </div>
-          {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+          {msg && <p className="text-xs text-destructive" role="alert">{msg}</p>}
           <button disabled={busy} type="submit"
-            className="w-full rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background disabled:opacity-50">
-            {busy ? "..." : mode === "signin" ? "Sign in" : "Create account"}
+            className="w-full rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background">
+            {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
         </form>
         <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-6 text-xs text-muted-foreground hover:text-foreground">
+          className="mt-6 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground rounded-sm">
           {mode === "signin" ? "Need an account? Sign up" : "Already have an account? Sign in"}
         </button>
         <div className="mt-8 border-t border-border pt-6">
