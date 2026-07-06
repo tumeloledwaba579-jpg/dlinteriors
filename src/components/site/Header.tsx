@@ -82,16 +82,18 @@ export function Header() {
         </div>
 
         <button
-          aria-label="Toggle menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
-          className="md:hidden text-foreground"
+          className="md:hidden text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
         >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div id="mobile-nav" className="md:hidden border-t border-border bg-background">
           <nav className="mx-auto flex max-w-7xl flex-col px-6 py-4">
             {nav.map((item) => (
               <Link

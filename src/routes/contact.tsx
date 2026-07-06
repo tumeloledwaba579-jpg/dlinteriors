@@ -84,13 +84,13 @@ function ContactPage() {
       <section className="mx-auto mt-16 grid max-w-7xl gap-12 px-6 md:grid-cols-12 md:gap-20">
         <div className="md:col-span-7">
           {submitted ? (
-            <div className="border border-border bg-card p-10 text-center">
+            <div className="border border-border bg-card p-10 text-center" role="status" aria-live="polite">
               <p className="eyebrow">Thank you</p>
               <h2 className="mt-3 font-serif text-3xl">Your message is on its way.</h2>
               <p className="mt-4 text-sm text-muted-foreground">We'll be in touch within one working day to set up your consultation.</p>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="space-y-6" noValidate>
+            <form onSubmit={onSubmit} className="space-y-6" noValidate aria-label="Project enquiry">
               <Field label="Name" name="name" error={errors.name} required />
               <div className="grid gap-6 md:grid-cols-2">
                 <Field label="Email" name="email" type="email" error={errors.email} required />
@@ -101,14 +101,23 @@ function ContactPage() {
                 <SelectField label="Budget (optional)" name="budget" error={errors.budget} options={opts.budgets} />
               </div>
               <div>
-                <label className="eyebrow block">Tell us about your project *</label>
-                <textarea name="message" rows={6} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" placeholder="A few words about your home, what you'd like to change, and your timeline." />
-                {errors.message && <p className="mt-2 text-xs text-destructive">{errors.message}</p>}
+                <label htmlFor="contact-message" className="eyebrow block">Tell us about your project *</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows={6}
+                  required
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? "contact-message-error" : undefined}
+                  className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground placeholder:text-muted-foreground"
+                  placeholder="A few words about your home, what you'd like to change, and your timeline."
+                />
+                {errors.message && <p id="contact-message-error" className="mt-2 text-xs text-destructive">{errors.message}</p>}
               </div>
               <button type="submit" disabled={submitting} className="rounded-full bg-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-background hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                 {submitting ? "Sending…" : "Send enquiry"}
               </button>
-              {submitError && <p className="text-xs text-destructive">{submitError}</p>}
+              {submitError && <p className="text-xs text-destructive" role="alert">{submitError}</p>}
               <p className="text-xs text-muted-foreground">We typically reply within one working day.</p>
             </form>
           )}
@@ -148,24 +157,42 @@ function ContactPage() {
 }
 
 function Field({ label, name, type = "text", error, required }: { label: string; name: string; type?: string; error?: string; required?: boolean }) {
+  const id = `field-${name}`;
   return (
     <div>
-      <label className="eyebrow block">{label}{required && " *"}</label>
-      <input name={name} type={type} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" />
-      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      <label htmlFor={id} className="eyebrow block">{label}{required && " *"}</label>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        required={required}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground placeholder:text-muted-foreground"
+      />
+      {error && <p id={`${id}-error`} className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
 }
 
 function SelectField({ label, name, options, error, required }: { label: string; name: string; options: string[]; error?: string; required?: boolean }) {
+  const id = `field-${name}`;
   return (
     <div>
-      <label className="eyebrow block">{label}{required && " *"}</label>
-      <select name={name} defaultValue="" className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground">
+      <label htmlFor={id} className="eyebrow block">{label}{required && " *"}</label>
+      <select
+        id={id}
+        name={name}
+        defaultValue=""
+        required={required}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+      >
         <option value="" disabled>Please select</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
-      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      {error && <p id={`${id}-error`} className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
 }
