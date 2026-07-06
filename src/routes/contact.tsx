@@ -157,24 +157,42 @@ function ContactPage() {
 }
 
 function Field({ label, name, type = "text", error, required }: { label: string; name: string; type?: string; error?: string; required?: boolean }) {
+  const id = `field-${name}`;
   return (
     <div>
-      <label className="eyebrow block">{label}{required && " *"}</label>
-      <input name={name} type={type} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" />
-      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      <label htmlFor={id} className="eyebrow block">{label}{required && " *"}</label>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        required={required}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground placeholder:text-muted-foreground"
+      />
+      {error && <p id={`${id}-error`} className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
 }
 
 function SelectField({ label, name, options, error, required }: { label: string; name: string; options: string[]; error?: string; required?: boolean }) {
+  const id = `field-${name}`;
   return (
     <div>
-      <label className="eyebrow block">{label}{required && " *"}</label>
-      <select name={name} defaultValue="" className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground">
+      <label htmlFor={id} className="eyebrow block">{label}{required && " *"}</label>
+      <select
+        id={id}
+        name={name}
+        defaultValue=""
+        required={required}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+      >
         <option value="" disabled>Please select</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
-      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      {error && <p id={`${id}-error`} className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
 }
