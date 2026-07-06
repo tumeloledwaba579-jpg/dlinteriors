@@ -90,7 +90,7 @@ function ContactPage() {
               <p className="mt-4 text-sm text-muted-foreground">We'll be in touch within one working day to set up your consultation.</p>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="space-y-6" noValidate>
+            <form onSubmit={onSubmit} className="space-y-6" noValidate aria-label="Project enquiry">
               <Field label="Name" name="name" error={errors.name} required />
               <div className="grid gap-6 md:grid-cols-2">
                 <Field label="Email" name="email" type="email" error={errors.email} required />
