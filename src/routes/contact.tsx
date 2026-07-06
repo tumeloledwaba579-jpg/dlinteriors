@@ -101,9 +101,18 @@ function ContactPage() {
                 <SelectField label="Budget (optional)" name="budget" error={errors.budget} options={opts.budgets} />
               </div>
               <div>
-                <label className="eyebrow block">Tell us about your project *</label>
-                <textarea name="message" rows={6} className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground" placeholder="A few words about your home, what you'd like to change, and your timeline." />
-                {errors.message && <p className="mt-2 text-xs text-destructive">{errors.message}</p>}
+                <label htmlFor="contact-message" className="eyebrow block">Tell us about your project *</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows={6}
+                  required
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? "contact-message-error" : undefined}
+                  className="mt-3 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground placeholder:text-muted-foreground"
+                  placeholder="A few words about your home, what you'd like to change, and your timeline."
+                />
+                {errors.message && <p id="contact-message-error" className="mt-2 text-xs text-destructive">{errors.message}</p>}
               </div>
               <button type="submit" disabled={submitting} className="rounded-full bg-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-background hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                 {submitting ? "Sending…" : "Send enquiry"}
