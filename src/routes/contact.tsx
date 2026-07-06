@@ -84,7 +84,7 @@ function ContactPage() {
       <section className="mx-auto mt-16 grid max-w-7xl gap-12 px-6 md:grid-cols-12 md:gap-20">
         <div className="md:col-span-7">
           {submitted ? (
-            <div className="border border-border bg-card p-10 text-center">
+            <div className="border border-border bg-card p-10 text-center" role="status" aria-live="polite">
               <p className="eyebrow">Thank you</p>
               <h2 className="mt-3 font-serif text-3xl">Your message is on its way.</h2>
               <p className="mt-4 text-sm text-muted-foreground">We'll be in touch within one working day to set up your consultation.</p>
