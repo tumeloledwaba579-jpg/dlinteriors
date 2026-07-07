@@ -132,13 +132,14 @@ function Index() {
         </div>
       </section>
 
-      <section id="get-in-touch" className="bg-foreground py-28 md:py-36 text-background">
+      <section id="get-in-touch" className="bg-foreground py-20 md:py-36 text-background">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <p className="eyebrow text-background/70">{cta.eyebrow}</p>
-          <h2 className="mt-4 font-serif text-5xl leading-tight md:text-7xl">
+          <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl md:text-7xl">
             {cta.headingLead} <em className="italic text-accent">{cta.headingItalic}</em>
           </h2>
           <p className="mx-auto mt-6 max-w-lg text-base text-background/70">{cta.body}</p>
+
           <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
             <Link to="/contact" className="rounded-full bg-primary px-8 py-4 text-xs uppercase tracking-[0.22em] text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
               {cta.primaryCta}
