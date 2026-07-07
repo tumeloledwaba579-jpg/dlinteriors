@@ -105,14 +105,15 @@ function Index() {
         </div>
       </section>
 
-      <section id="services" className="mx-auto max-w-7xl px-6 py-24 md:py-32">
+      <section id="services" className="mx-auto max-w-7xl px-6 py-16 md:py-32">
         <div className="max-w-3xl">
           <p className="eyebrow">{svc.eyebrow}</p>
-          <h2 className="mt-3 font-serif text-4xl md:text-6xl">
+          <h2 className="mt-3 font-serif text-3xl sm:text-4xl md:text-6xl">
             {svc.headingLead} <span className="text-primary">|</span> {svc.headingItalic}
           </h2>
           <p className="mt-5 text-base text-muted-foreground">{svc.intro}</p>
         </div>
+
 
         <div className="mt-16 grid gap-px overflow-hidden border border-border md:grid-cols-2 lg:grid-cols-4">
           {svc.items.map((s, i) => (
