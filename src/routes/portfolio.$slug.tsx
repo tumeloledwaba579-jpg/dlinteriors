@@ -66,18 +66,19 @@ function ProjectPage() {
   return (
     <article className="pb-24">
       {/* Hero image */}
-      <div className="relative h-[78svh] min-h-[520px] w-full overflow-hidden">
-        <img src={project.image} alt={project.title} width={1920} height={1200} className="absolute inset-0 h-full w-full object-cover" />
+      <div className="relative h-[68svh] min-h-[440px] w-full overflow-hidden md:min-h-[560px]">
+        <img src={project.image} alt={project.title} width={1920} height={1200} fetchPriority="high" decoding="async" sizes="100vw" className="absolute inset-0 h-full w-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 to-background/70" />
-        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-16">
+        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-12 md:pb-16">
           <p className="eyebrow">{project.style} · {project.location}</p>
-          <h1 className="mt-3 max-w-3xl font-serif text-5xl leading-[1.05] md:text-7xl">{project.title}</h1>
+          <h1 className="mt-3 max-w-3xl font-serif text-4xl leading-[1.05] sm:text-5xl md:text-7xl">{project.title}</h1>
         </div>
       </div>
 
       {/* Meta */}
-      <section className="mx-auto mt-16 max-w-7xl px-6">
-        <div className="grid gap-8 border-y border-border py-8 md:grid-cols-4 md:gap-12">
+      <section className="mx-auto mt-12 max-w-7xl px-6 md:mt-16">
+        <div className="grid grid-cols-2 gap-6 border-y border-border py-6 md:grid-cols-4 md:gap-12 md:py-8">
+
           <div><p className="eyebrow">Location</p><p className="mt-2 font-serif text-xl">{project.location}</p></div>
           <div><p className="eyebrow">Space</p><p className="mt-2 font-serif text-xl">{project.space}</p></div>
           <div><p className="eyebrow">Style</p><p className="mt-2 font-serif text-xl">{project.style}</p></div>
@@ -98,22 +99,23 @@ function ProjectPage() {
       </section>
 
       {/* Gallery */}
-      <section className="mx-auto mt-20 max-w-7xl space-y-6 px-6">
+      <section className="mx-auto mt-16 max-w-7xl space-y-5 px-6 md:mt-20 md:space-y-6">
         {project.gallery.map((src: string, i: number) => (
-          <div key={i} className={`overflow-hidden bg-muted ${i % 2 === 0 ? "aspect-[16/10]" : "grid gap-6 md:grid-cols-2 bg-transparent"}`}>
+          <div key={i} className={`overflow-hidden bg-muted ${i % 2 === 0 ? "aspect-[4/3] md:aspect-[16/10]" : "grid gap-5 md:grid-cols-2 md:gap-6 bg-transparent"}`}>
             {i % 2 === 0 ? (
-              <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" width={1920} height={1200} className="h-full w-full object-cover" />
+              <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={1920} height={1200} sizes="(max-width: 1280px) 100vw, 1200px" className="h-full w-full object-cover" />
             ) : (
               <>
-                <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" width={1280} height={1600} className="aspect-[4/5] w-full object-cover" />
+                <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-[4/5] w-full object-cover" />
                 {project.gallery[i + 1] && (
-                  <img src={project.gallery[i + 1]} alt={`${project.title} — view ${i + 2}`} loading="lazy" width={1280} height={1600} className="aspect-[4/5] w-full object-cover" />
+                  <img src={project.gallery[i + 1]} alt={`${project.title} — view ${i + 2}`} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-[4/5] w-full object-cover" />
                 )}
               </>
             )}
           </div>
         ))}
       </section>
+
 
       {/* Palette + materials */}
       <section className="mx-auto mt-24 grid max-w-7xl gap-16 px-6 md:grid-cols-2">
@@ -138,16 +140,16 @@ function ProjectPage() {
       </section>
 
       {/* Related */}
-      <section className="mx-auto mt-32 max-w-7xl px-6">
+      <section className="mx-auto mt-24 max-w-7xl px-6 md:mt-32">
         <div className="flex items-end justify-between border-b border-border pb-6">
-          <h2 className="font-serif text-3xl md:text-4xl">Related projects</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl">Related projects</h2>
           <Link to="/portfolio" className="text-xs uppercase tracking-[0.2em] hover:underline underline-offset-8">All work →</Link>
         </div>
-        <div className="mt-10 grid gap-x-6 gap-y-10 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:mt-10 md:grid-cols-3">
           {related.map((p) => (
             <Link key={p.slug} to="/portfolio/$slug" params={{ slug: p.slug }} className="group block">
               <div className="aspect-[4/5] overflow-hidden bg-muted">
-                <img src={p.image} alt={p.title} loading="lazy" width={1280} height={1600} className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
+                <img src={p.image} alt={p.title} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
               </div>
               <h3 className="mt-4 font-serif text-xl">{p.title}</h3>
               <p className="text-sm text-muted-foreground">{p.style}</p>
@@ -155,6 +157,7 @@ function ProjectPage() {
           ))}
         </div>
       </section>
+
 
       {/* CTA */}
       <section className="mx-auto mt-24 flex max-w-7xl items-center justify-between gap-6 border-t border-border px-6 pt-10">

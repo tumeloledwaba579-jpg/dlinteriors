@@ -1,55 +1,35 @@
-## Finishing touches
+## Goal
+Trim oversized images site-wide, especially on the home page, and add a proper mobile pass (responsive image loading, tighter heights, comfortable spacing and typography).
 
-A quick walkthrough of the site + admin surfaced these gaps. Grouped by priority so you can pick what to ship.
+## Home page (`src/routes/index.tsx`)
+- Hero section: reduce from `h-[100svh] min-h-[640px]` to `h-[85svh] min-h-[520px] md:min-h-[640px]`; scale headline down on small screens (`text-5xl md:text-8xl lg:text-9xl`) and reduce top button padding/gap on mobile.
+- Hero `<img>`: add `fetchpriority="high"`, `decoding="async"`, and use `object-position: center` on mobile so subject stays visible when cropped narrow.
+- Profile portrait: keep 4/5 on mobile, cap width — change wrapper to `max-w-sm md:max-w-none mx-auto` so it doesn't dominate small screens.
+- Category cards: switch mobile aspect from `4/3` (currently full-width tall) to `3/2` mobile / `4/3` desktop to reduce vertical scroll; reduce section vertical padding on mobile (`py-16 md:py-32`).
+- CTA section: reduce mobile heading size (`text-4xl md:text-7xl`) and padding (`py-20 md:py-36`).
 
-### 1. Brand & metadata (high impact, low effort)
-- Add a real **favicon + apple-touch-icon** (currently the default Lovable icon shows in tabs).
-- Add a proper **og:image** on the homepage and About/Services/Contact leaves (social share currently has none, so previews are blank).
-- Wire the studio name from `site.branding` into the root `<title>` / og tags so renaming the studio in admin updates browser tabs too.
-- Generate `robots.txt` allow + confirm `sitemap.xml` includes About, Services, Contact, and portfolio detail routes.
+## Portfolio listing (`src/routes/portfolio.tsx`)
+- Cap the featured (every-3rd) image at `aspect-[16/10]` on mobile (currently `16/9` is very wide when full-bleed) — actually keep 16/9 on desktop, use `4/3` on mobile.
+- Reduce top padding on mobile (`pt-24 md:pt-40`).
 
-### 2. Contact form actually works
-Right now the form on `/contact` just shows a thank-you; submissions are lost.
-- New `contact_submissions` table (name, email, phone, project_type, budget, message, created_at) with admin-only read, public insert.
-- Store the submission on submit, keep the thank-you state.
-- New **"Inquiries"** tab in `/admin` to view / mark-read / delete leads.
-- Optional: email notification via a public API route + Resend (needs a `RESEND_API_KEY` secret — I'll ask before adding).
+## Project detail (`src/routes/portfolio.$slug.tsx`)
+- Hero: reduce from `h-[78svh] min-h-[520px]` to `h-[68svh] min-h-[440px] md:min-h-[560px]`; headline `text-4xl md:text-7xl`.
+- Gallery: current alternating layout produces very tall stacked images on mobile — force `aspect-[4/3]` on mobile for the wide items, and stack the paired items vertically on mobile with a smaller `aspect-[4/5]`.
+- Add `decoding="async"` to all `<img>`.
+- Meta grid: `grid-cols-2 md:grid-cols-4` so labels don't stack into a tall column on mobile.
 
-### 3. Image & performance polish
-- Add `loading="lazy"` + `decoding="async"` to all non-hero `<img>` tags (hero stays eager).
-- Add explicit `width`/`height` where missing to prevent layout shift.
-- Compress / swap the hero to a `<picture>` with a mobile crop (the current hero image is heavy on phones).
-- Add a subtle skeleton/placeholder for portfolio + category cards while images load.
+## Responsive image loading (global pattern)
+For each large `<img>`, add:
+- `sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 1200px"` (adjusted per usage)
+- `loading="lazy"` everywhere except the LCP hero images (which get `fetchpriority="high"`)
+- `decoding="async"`
 
-### 4. Accessibility
-- Give every decorative image `alt=""` and every meaningful image a real alt (some currently say "" or reuse the title).
-- Ensure the header nav has a visible focus ring and the mobile menu traps focus / closes on Esc.
-- Contrast check on the hero overlay text and the muted-foreground body copy.
-- Add `aria-current="page"` to the active nav link.
+Uploaded images through Supabase storage are single-size, so we can't generate a true `srcset`. The wins here come from correct `sizes`/`loading`/`decoding` hints, tighter aspect ratios, and reduced heights — the browser will still download the single source but render efficiently, and CDN caching handles the rest. Bundled `@/assets/*` images are already optimized by Vite.
 
-### 5. Admin UX
-- Replace the browser `alert()` / `confirm()` calls with the existing `sonner` toast + a small confirm dialog.
-- Add a **"Preview"** link next to each Pages sub-tab that opens the corresponding public page in a new tab.
-- Show a "last saved" timestamp per section.
-- Add **drag-to-reorder** (or up/down arrows) for services, testimonials, categories, process steps — currently only numeric `sort_order` inputs.
-- Add an **"Invite admin"** flow: an existing admin can grant the role to another signed-in user by email (uses `has_role` + a small server function).
+## Out of scope
+- No changes to admin, auth, forms, business logic, or data.
+- No new dependencies.
+- Not regenerating source images at smaller dimensions (would require re-uploading assets).
 
-### 6. 404 / error / loading states
-- The root `NotFoundComponent` exists but leaf routes (portfolio/[slug]) fall through to it silently — add a per-route `notFoundComponent` that says "Project not found" with a link back to portfolio.
-- Add a `pendingComponent` (small skeleton) on portfolio + services so navigation doesn't flash blank.
-
-### 7. Small visual bugs to sweep
-- Header: mobile hamburger + slide-in menu (currently nav is desktop-only below a certain width).
-- Footer: year should be dynamic (`new Date().getFullYear()`).
-- Portfolio detail: back-to-portfolio link.
-- Consistent button sizing — a couple of CTAs are `py-3` vs `py-3.5`.
-
-### Out of scope unless you ask
-- Blog / journal
-- Multi-language
-- Analytics beyond what Lovable already provides
-- Full CMS-editable navigation (menu is currently fixed)
-
----
-
-**Which of these should I do?** A safe default first pass would be **1, 2, 4, 6, and 7** — the user-facing polish + working contact form. **3** and **5** are worth a follow-up round. Let me know which groups to ship (or "all") and whether to add Resend for contact-form emails.
+## Verification
+- Load `/`, `/portfolio`, `/portfolio/westcliff-residence` at 375px, 768px, and 1280px via Playwright; screenshot each and confirm images no longer dominate the viewport and vertical rhythm feels balanced.
