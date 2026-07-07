@@ -25,10 +25,10 @@ function PortfolioPage() {
     });
   }, []);
   return (
-    <div className="pt-32 md:pt-40">
+    <div className="pt-24 md:pt-40">
       <header className="mx-auto max-w-7xl px-6">
         <p className="eyebrow">Portfolio</p>
-        <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[1.05] md:text-7xl">
+        <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-[1.05] sm:text-5xl md:text-7xl">
           A small, careful body of work.
         </h1>
         <p className="mt-6 max-w-xl text-base text-muted-foreground">
@@ -36,8 +36,8 @@ function PortfolioPage() {
         </p>
       </header>
 
-      <div className="mx-auto mt-16 max-w-7xl px-6 pb-12">
-        <div className="grid grid-cols-1 gap-x-6 gap-y-16 md:grid-cols-2">
+      <div className="mx-auto mt-12 max-w-7xl px-6 pb-12 md:mt-16">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 md:gap-y-16">
           {items.map((p, i) => (
             <Link
               key={p.slug}
@@ -45,16 +45,19 @@ function PortfolioPage() {
               params={{ slug: p.slug }}
               className={`group block ${i % 3 === 0 ? "md:col-span-2" : ""}`}
             >
-              <div className={`overflow-hidden bg-muted ${i % 3 === 0 ? "aspect-[16/9]" : "aspect-[4/5]"}`}>
+              <div className={`overflow-hidden bg-muted ${i % 3 === 0 ? "aspect-[4/3] md:aspect-[16/9]" : "aspect-[4/5]"}`}>
                 <img
                   src={p.image}
                   alt={p.title}
                   loading="lazy"
+                  decoding="async"
                   width={1280}
                   height={1600}
+                  sizes={i % 3 === 0 ? "(max-width: 768px) 100vw, 1200px" : "(max-width: 768px) 100vw, 50vw"}
                   className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
                 />
               </div>
+
               <div className="mt-5 flex items-baseline justify-between gap-4">
                 <div>
                   <h2 className="font-serif text-2xl md:text-3xl">{p.title}</h2>
