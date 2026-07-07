@@ -99,22 +99,23 @@ function ProjectPage() {
       </section>
 
       {/* Gallery */}
-      <section className="mx-auto mt-20 max-w-7xl space-y-6 px-6">
+      <section className="mx-auto mt-16 max-w-7xl space-y-5 px-6 md:mt-20 md:space-y-6">
         {project.gallery.map((src: string, i: number) => (
-          <div key={i} className={`overflow-hidden bg-muted ${i % 2 === 0 ? "aspect-[16/10]" : "grid gap-6 md:grid-cols-2 bg-transparent"}`}>
+          <div key={i} className={`overflow-hidden bg-muted ${i % 2 === 0 ? "aspect-[4/3] md:aspect-[16/10]" : "grid gap-5 md:grid-cols-2 md:gap-6 bg-transparent"}`}>
             {i % 2 === 0 ? (
-              <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" width={1920} height={1200} className="h-full w-full object-cover" />
+              <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={1920} height={1200} sizes="(max-width: 1280px) 100vw, 1200px" className="h-full w-full object-cover" />
             ) : (
               <>
-                <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" width={1280} height={1600} className="aspect-[4/5] w-full object-cover" />
+                <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-[4/5] w-full object-cover" />
                 {project.gallery[i + 1] && (
-                  <img src={project.gallery[i + 1]} alt={`${project.title} — view ${i + 2}`} loading="lazy" width={1280} height={1600} className="aspect-[4/5] w-full object-cover" />
+                  <img src={project.gallery[i + 1]} alt={`${project.title} — view ${i + 2}`} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-[4/5] w-full object-cover" />
                 )}
               </>
             )}
           </div>
         ))}
       </section>
+
 
       {/* Palette + materials */}
       <section className="mx-auto mt-24 grid max-w-7xl gap-16 px-6 md:grid-cols-2">
