@@ -66,18 +66,19 @@ function ProjectPage() {
   return (
     <article className="pb-24">
       {/* Hero image */}
-      <div className="relative h-[78svh] min-h-[520px] w-full overflow-hidden">
-        <img src={project.image} alt={project.title} width={1920} height={1200} className="absolute inset-0 h-full w-full object-cover" />
+      <div className="relative h-[68svh] min-h-[440px] w-full overflow-hidden md:min-h-[560px]">
+        <img src={project.image} alt={project.title} width={1920} height={1200} fetchPriority="high" decoding="async" sizes="100vw" className="absolute inset-0 h-full w-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 to-background/70" />
-        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-16">
+        <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-12 md:pb-16">
           <p className="eyebrow">{project.style} · {project.location}</p>
-          <h1 className="mt-3 max-w-3xl font-serif text-5xl leading-[1.05] md:text-7xl">{project.title}</h1>
+          <h1 className="mt-3 max-w-3xl font-serif text-4xl leading-[1.05] sm:text-5xl md:text-7xl">{project.title}</h1>
         </div>
       </div>
 
       {/* Meta */}
-      <section className="mx-auto mt-16 max-w-7xl px-6">
-        <div className="grid gap-8 border-y border-border py-8 md:grid-cols-4 md:gap-12">
+      <section className="mx-auto mt-12 max-w-7xl px-6 md:mt-16">
+        <div className="grid grid-cols-2 gap-6 border-y border-border py-6 md:grid-cols-4 md:gap-12 md:py-8">
+
           <div><p className="eyebrow">Location</p><p className="mt-2 font-serif text-xl">{project.location}</p></div>
           <div><p className="eyebrow">Space</p><p className="mt-2 font-serif text-xl">{project.space}</p></div>
           <div><p className="eyebrow">Style</p><p className="mt-2 font-serif text-xl">{project.style}</p></div>
