@@ -48,13 +48,14 @@ function Index() {
       </section>
 
 
-      <section id="profile" className="mx-auto max-w-7xl px-6 py-24 md:py-36">
-        <div className="grid gap-14 md:grid-cols-12 md:items-center">
+      <section id="profile" className="mx-auto max-w-7xl px-6 py-16 md:py-36">
+        <div className="grid gap-10 md:grid-cols-12 md:items-center md:gap-14">
           <div className="md:col-span-5">
-            <div className="overflow-hidden bg-card aspect-[4/5]">
-              <img src={profile.portrait} alt="Founding designer portrait" loading="lazy" width={1024} height={1280} className="h-full w-full object-cover" />
+            <div className="mx-auto aspect-[4/5] max-w-xs overflow-hidden bg-card sm:max-w-sm md:max-w-none">
+              <img src={profile.portrait} alt="Founding designer portrait" loading="lazy" decoding="async" width={1024} height={1280} sizes="(max-width: 768px) 80vw, 40vw" className="h-full w-full object-cover" />
             </div>
           </div>
+
           <div className="md:col-span-7">
             <p className="eyebrow">{profile.eyebrow}</p>
             <h2 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">
