@@ -25,27 +25,28 @@ function Index() {
 
   return (
     <>
-      <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
-        <img src={hero.image} alt="" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover" />
+      <section className="relative h-[85svh] min-h-[520px] w-full overflow-hidden md:min-h-[640px]">
+        <img src={hero.image} alt="" width={1920} height={1080} fetchPriority="high" decoding="async" sizes="100vw" className="absolute inset-0 h-full w-full object-cover object-center" />
         <div className="absolute inset-0 bg-foreground/30" />
         <div className="relative z-10 mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-6 text-center">
           <p className="eyebrow text-background/80">{hero.eyebrow}</p>
-          <h1 className="mt-6 font-serif text-6xl leading-[1] text-background md:text-8xl lg:text-9xl">
+          <h1 className="mt-6 font-serif text-5xl leading-[1] text-background sm:text-6xl md:text-8xl lg:text-9xl">
             {hero.titleLead} <em className="italic">{hero.titleItalic}</em>
           </h1>
-          <p className="mt-6 max-w-xl text-sm uppercase tracking-[0.28em] text-background/85">{hero.tagline}</p>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-xs uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-foreground">
+          <p className="mt-5 max-w-xl text-xs uppercase tracking-[0.24em] text-background/85 sm:text-sm sm:tracking-[0.28em]">{hero.tagline}</p>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3 md:mt-12">
+            <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-foreground sm:px-8 sm:py-3.5">
               {hero.primaryCta}
             </Link>
             {hero.phoneLabel && (
-              <a href={`tel:${hero.phoneTel}`} className="inline-flex items-center gap-2 rounded-full bg-background/95 px-8 py-3.5 text-xs uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-background">
+              <a href={`tel:${hero.phoneTel}`} className="inline-flex items-center gap-2 rounded-full bg-background/95 px-6 py-3 text-xs uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-background sm:px-8 sm:py-3.5">
                 <Phone size={13} /> {hero.phoneLabel}
               </a>
             )}
           </div>
         </div>
       </section>
+
 
       <section id="profile" className="mx-auto max-w-7xl px-6 py-24 md:py-36">
         <div className="grid gap-14 md:grid-cols-12 md:items-center">
