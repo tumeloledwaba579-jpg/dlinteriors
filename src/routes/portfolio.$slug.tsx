@@ -140,16 +140,16 @@ function ProjectPage() {
       </section>
 
       {/* Related */}
-      <section className="mx-auto mt-32 max-w-7xl px-6">
+      <section className="mx-auto mt-24 max-w-7xl px-6 md:mt-32">
         <div className="flex items-end justify-between border-b border-border pb-6">
-          <h2 className="font-serif text-3xl md:text-4xl">Related projects</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl">Related projects</h2>
           <Link to="/portfolio" className="text-xs uppercase tracking-[0.2em] hover:underline underline-offset-8">All work →</Link>
         </div>
-        <div className="mt-10 grid gap-x-6 gap-y-10 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:mt-10 md:grid-cols-3">
           {related.map((p) => (
             <Link key={p.slug} to="/portfolio/$slug" params={{ slug: p.slug }} className="group block">
               <div className="aspect-[4/5] overflow-hidden bg-muted">
-                <img src={p.image} alt={p.title} loading="lazy" width={1280} height={1600} className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
+                <img src={p.image} alt={p.title} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
               </div>
               <h3 className="mt-4 font-serif text-xl">{p.title}</h3>
               <p className="text-sm text-muted-foreground">{p.style}</p>
@@ -157,6 +157,7 @@ function ProjectPage() {
           ))}
         </div>
       </section>
+
 
       {/* CTA */}
       <section className="mx-auto mt-24 flex max-w-7xl items-center justify-between gap-6 border-t border-border px-6 pt-10">
