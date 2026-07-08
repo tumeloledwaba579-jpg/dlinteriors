@@ -100,22 +100,16 @@ function ProjectPage() {
       </section>
 
       {/* Gallery */}
-      <section className="mx-auto mt-16 max-w-7xl space-y-5 px-6 md:mt-20 md:space-y-6">
-        {project.gallery.map((src: string, i: number) => (
-          <div key={i} className={`overflow-hidden bg-muted ${i % 2 === 0 ? "aspect-[4/3] md:aspect-[16/10]" : "grid gap-5 md:grid-cols-2 md:gap-6 bg-transparent"}`}>
-            {i % 2 === 0 ? (
-              <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={1920} height={1200} sizes="(max-width: 1280px) 100vw, 1200px" className="h-full w-full object-cover" />
-            ) : (
-              <>
-                <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-[4/5] w-full object-cover" />
-                {project.gallery[i + 1] && (
-                  <img src={project.gallery[i + 1]} alt={`${project.title} — view ${i + 2}`} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-[4/5] w-full object-cover" />
-                )}
-              </>
-            )}
-          </div>
-        ))}
+      <section className="mx-auto mt-16 max-w-7xl px-6 md:mt-20">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+          {project.gallery.map((src: string, i: number) => (
+            <div key={i} className="aspect-[4/3] overflow-hidden bg-muted">
+              <img src={src} alt={`${project.title} — view ${i + 1}`} loading="lazy" decoding="async" width={800} height={600} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="h-full w-full object-cover" />
+            </div>
+          ))}
+        </div>
       </section>
+
 
 
       {/* Palette + materials */}
