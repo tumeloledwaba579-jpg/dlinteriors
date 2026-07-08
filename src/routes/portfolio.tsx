@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { projects as staticProjects } from "@/lib/projects";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,33 +19,66 @@ export const Route = createFileRoute("/portfolio")({
 
 function PortfolioPage() {
   const [items, setItems] = useState(staticProjects.map(p => ({ slug: p.slug, title: p.title, location: p.location, style: p.style, space: p.space, year: p.year, image: p.image })));
+  const [active, setActive] = useState<string>("All");
+
   useEffect(() => {
     supabase.from("projects").select("slug,title,location,style,space,year,cover_image,sort_order").eq("published", true).order("sort_order").then(({ data }) => {
       if (data && data.length > 0) setItems(data.map(d => ({ slug: d.slug, title: d.title, location: d.location, style: d.style, space: d.space, year: d.year, image: d.cover_image ?? "" })));
     });
   }, []);
+
+  const filters = useMemo(() => {
+    const spaces = Array.from(new Set(items.map(i => i.space).filter(Boolean)));
+    return ["All", ...spaces];
+  }, [items]);
+
+  const visible = active === "All" ? items : items.filter(i => i.space === active);
+
   return (
-    <div className="pt-24 md:pt-40">
-      <header className="mx-auto max-w-7xl px-6">
-        <p className="eyebrow">Portfolio</p>
-        <h1 className="mt-4 max-w-4xl font-serif text-4xl leading-[1.05] sm:text-5xl md:text-7xl">
-          A small, careful body of work.
+    <div className="pt-24 md:pt-32">
+      <header className="mx-auto max-w-7xl px-6 text-center">
+        <h1 className="font-serif text-3xl leading-tight sm:text-4xl md:text-5xl">
+          Portfolio
         </h1>
-        <p className="mt-6 max-w-xl text-base text-muted-foreground">
-          We take on a limited number of residential commissions each year. These are recent projects we're proud of.
+        <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
+          A selection of recent residential commissions across South Africa.
         </p>
       </header>
 
-      <div className="mx-auto mt-10 max-w-7xl px-6 pb-16 md:mt-14">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-          {items.map((p) => (
+      {/* Filter chips — Lynne Blumberg style */}
+      <div className="mx-auto mt-8 max-w-7xl px-6 md:mt-10">
+        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+          {filters.map((f) => {
+            const isActive = active === f;
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setActive(f)}
+                className={`rounded-md border px-4 py-2 text-xs uppercase tracking-[0.14em] transition-colors md:px-5 md:py-2.5 ${
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                }`}
+              >
+                {f}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mx-auto mt-8 max-w-7xl px-4 pb-16 md:mt-10 md:px-6">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+          {visible.map((p) => (
             <Link
               key={p.slug}
               to="/portfolio/$slug"
               params={{ slug: p.slug }}
-              className="group block"
+              className="group relative block overflow-hidden bg-muted"
+              aria-label={p.title}
             >
-              <div className="aspect-[4/3] overflow-hidden bg-muted">
+              <div className="aspect-[4/3] w-full">
                 <img
                   src={p.image}
                   alt={p.title}
@@ -54,22 +87,19 @@ function PortfolioPage() {
                   width={800}
                   height={600}
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+                  className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.05]"
                 />
               </div>
-
-              <div className="mt-3 flex items-baseline justify-between gap-2">
-                <div className="min-w-0">
-                  <h2 className="truncate font-serif text-base md:text-lg">{p.title}</h2>
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{p.style} · {p.location}</p>
+              <div className="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="p-3 md:p-4">
+                  <p className="font-serif text-sm text-background md:text-base">{p.title}</p>
+                  <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-background/80">{p.space}</p>
                 </div>
-                <span className="shrink-0 text-[10px] text-muted-foreground">{p.year}</span>
               </div>
             </Link>
           ))}
         </div>
       </div>
-
     </div>
   );
 }
