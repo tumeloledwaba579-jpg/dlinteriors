@@ -69,7 +69,8 @@ function PortfolioPage() {
       </div>
 
       <div className="mx-auto mt-8 max-w-7xl px-4 pb-16 md:mt-10 md:px-6">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-1 sm:grid-cols-3 sm:gap-1.5 lg:grid-cols-4">
+
           {visible.map((p) => (
             <Link
               key={p.slug}
