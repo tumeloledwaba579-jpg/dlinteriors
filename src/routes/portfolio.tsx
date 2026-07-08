@@ -36,39 +36,40 @@ function PortfolioPage() {
         </p>
       </header>
 
-      <div className="mx-auto mt-12 max-w-7xl px-6 pb-12 md:mt-16">
-        <div className="grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 md:gap-y-16">
-          {items.map((p, i) => (
+      <div className="mx-auto mt-10 max-w-7xl px-6 pb-16 md:mt-14">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+          {items.map((p) => (
             <Link
               key={p.slug}
               to="/portfolio/$slug"
               params={{ slug: p.slug }}
-              className={`group block ${i % 3 === 0 ? "md:col-span-2" : ""}`}
+              className="group block"
             >
-              <div className={`overflow-hidden bg-muted ${i % 3 === 0 ? "aspect-[4/3] md:aspect-[16/9]" : "aspect-[4/5]"}`}>
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
                 <img
                   src={p.image}
                   alt={p.title}
                   loading="lazy"
                   decoding="async"
-                  width={1280}
-                  height={1600}
-                  sizes={i % 3 === 0 ? "(max-width: 768px) 100vw, 1200px" : "(max-width: 768px) 100vw, 50vw"}
+                  width={800}
+                  height={600}
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
                 />
               </div>
 
-              <div className="mt-5 flex items-baseline justify-between gap-4">
-                <div>
-                  <h2 className="font-serif text-2xl md:text-3xl">{p.title}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{p.style} · {p.space} · {p.location}</p>
+              <div className="mt-3 flex items-baseline justify-between gap-2">
+                <div className="min-w-0">
+                  <h2 className="truncate font-serif text-base md:text-lg">{p.title}</h2>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{p.style} · {p.location}</p>
                 </div>
-                <span className="text-xs text-muted-foreground">{p.year}</span>
+                <span className="shrink-0 text-[10px] text-muted-foreground">{p.year}</span>
               </div>
             </Link>
           ))}
         </div>
       </div>
+
     </div>
   );
 }
