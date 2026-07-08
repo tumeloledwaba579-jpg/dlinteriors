@@ -140,17 +140,18 @@ function ProjectPage() {
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl">Related projects</h2>
           <Link to="/portfolio" className="text-xs uppercase tracking-[0.2em] hover:underline underline-offset-8">All work →</Link>
         </div>
-        <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:mt-10 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:mt-10 md:grid-cols-3">
           {related.map((p) => (
             <Link key={p.slug} to="/portfolio/$slug" params={{ slug: p.slug }} className="group block">
-              <div className="aspect-[4/5] overflow-hidden bg-muted">
-                <img src={p.image} alt={p.title} loading="lazy" decoding="async" width={1280} height={1600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
+                <img src={p.image} alt={p.title} loading="lazy" decoding="async" width={800} height={600} sizes="(max-width: 640px) 50vw, 33vw" className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
               </div>
-              <h3 className="mt-4 font-serif text-xl">{p.title}</h3>
-              <p className="text-sm text-muted-foreground">{p.style}</p>
+              <h3 className="mt-3 truncate font-serif text-base md:text-lg">{p.title}</h3>
+              <p className="truncate text-xs text-muted-foreground">{p.style}</p>
             </Link>
           ))}
         </div>
+
       </section>
 
 
