@@ -7,8 +7,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "dl interiors — Residential Interior Design, Johannesburg & Pretoria" },
       { name: "description", content: "Full turnkey and consultation interior design across residential, corporate, hospitality and retail projects in South Africa." },
-      { property: "og:title", content: "dl interiors — Interior Design Studio" },
-      { property: "og:description", content: "Full turnkey interior design across South Africa." },
+      { property: "og:title", content: "dl interiors — Residential Interior Design, Johannesburg & Pretoria" },
+      { property: "og:description", content: "Full turnkey and consultation interior design across residential, corporate, hospitality and retail projects in South Africa." },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
