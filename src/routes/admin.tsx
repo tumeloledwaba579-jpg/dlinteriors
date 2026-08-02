@@ -8,6 +8,7 @@ import { AdminTestimonials } from "@/components/admin/AdminTestimonials";
 import { AdminContact } from "@/components/admin/AdminContact";
 import { AdminPages } from "@/components/admin/AdminPages";
 import { AdminInquiries } from "@/components/admin/AdminInquiries";
+import { AdminUsers } from "@/components/admin/AdminUsers";
 
 
 
