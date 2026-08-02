@@ -112,6 +112,7 @@ function AdminPage() {
           {tab === "testimonials" && <AdminTestimonials />}
           {tab === "contact" && <AdminContact />}
           {tab === "inquiries" && <AdminInquiries />}
+          {tab === "users" && <AdminUsers />}
 
         </div>
       </div>
