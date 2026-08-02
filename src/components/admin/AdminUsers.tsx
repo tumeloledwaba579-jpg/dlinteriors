@@ -1,0 +1,85 @@
+import { useCallback, useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { listUsers, grantAdmin, revokeAdmin, type AdminUser } from "@/lib/admin-users.functions";
+import { Btn, Card } from "./ui";
+
+export function AdminUsers() {
+  const fetchUsers = useServerFn(listUsers);
+  const grant = useServerFn(grantAdmin);
+  const revoke = useServerFn(revokeAdmin);
+
+  const [users, setUsers] = useState<AdminUser[] | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      setUsers(await fetchUsers());
+    } catch (err: any) {
+      setMsg(err.message ?? "Could not load accounts.");
+    }
+  }, [fetchUsers]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const act = async (id: string, makeAdmin: boolean) => {
+    setBusyId(id); setMsg(null);
+    try {
+      if (makeAdmin) await grant({ data: { userId: id } });
+      else await revoke({ data: { userId: id } });
+      await load();
+    } catch (err: any) {
+      setMsg(err.message ?? "Something went wrong.");
+    } finally { setBusyId(null); }
+  };
+
+  if (!users) return <p className="text-sm text-muted-foreground">Loading…</p>;
+
+  return (
+    <div className="space-y-4 max-w-4xl">
+      {msg && <p className="text-sm text-destructive" role="alert">{msg}</p>}
+      <Card>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left border-b border-border">
+              <th className="pb-3 eyebrow font-normal">Email</th>
+              <th className="pb-3 eyebrow font-normal">Joined</th>
+              <th className="pb-3 eyebrow font-normal">Status</th>
+              <th className="pb-3 eyebrow font-normal text-right">Admin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((u) => (
+              <tr key={u.id} className="border-b border-border/60 last:border-0">
+                <td className="py-3 pr-4 break-all">{u.email}</td>
+                <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">
+                  {new Date(u.createdAt).toLocaleDateString()}
+                </td>
+                <td className="py-3 pr-4 text-muted-foreground">
+                  {u.confirmed ? "Confirmed" : "Unconfirmed"}
+                </td>
+                <td className="py-3 text-right">
+                  {u.isAdmin ? (
+                    <div className="flex items-center justify-end gap-3">
+                      <span className="text-xs uppercase tracking-[0.18em]">Admin</span>
+                      <Btn variant="danger" disabled={busyId === u.id} onClick={() => act(u.id, false)}>
+                        {busyId === u.id ? "…" : "Remove"}
+                      </Btn>
+                    </div>
+                  ) : (
+                    <Btn disabled={busyId === u.id} onClick={() => act(u.id, true)}>
+                      {busyId === u.id ? "…" : "Make admin"}
+                    </Btn>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+      <p className="text-xs text-muted-foreground">
+        Accounts appear here once someone signs up on the site. There must always be at least one admin.
+      </p>
+    </div>
+  );
+}
