@@ -1,35 +1,24 @@
-## Goal
-Trim oversized images site-wide, especially on the home page, and add a proper mobile pass (responsive image loading, tighter heights, comfortable spacing and typography).
+# Grant admin access to an account
 
-## Home page (`src/routes/index.tsx`)
-- Hero section: reduce from `h-[100svh] min-h-[640px]` to `h-[85svh] min-h-[520px] md:min-h-[640px]`; scale headline down on small screens (`text-5xl md:text-8xl lg:text-9xl`) and reduce top button padding/gap on mobile.
-- Hero `<img>`: add `fetchpriority="high"`, `decoding="async"`, and use `object-position: center` on mobile so subject stays visible when cropped narrow.
-- Profile portrait: keep 4/5 on mobile, cap width — change wrapper to `max-w-sm md:max-w-none mx-auto` so it doesn't dominate small screens.
-- Category cards: switch mobile aspect from `4/3` (currently full-width tall) to `3/2` mobile / `4/3` desktop to reduce vertical scroll; reduce section vertical padding on mobile (`py-16 md:py-32`).
-- CTA section: reduce mobile heading size (`text-4xl md:text-7xl`) and padding (`py-20 md:py-36`).
+## Current state
 
-## Portfolio listing (`src/routes/portfolio.tsx`)
-- Cap the featured (every-3rd) image at `aspect-[16/10]` on mobile (currently `16/9` is very wide when full-bleed) — actually keep 16/9 on desktop, use `4/3` on mobile.
-- Reduce top padding on mobile (`pt-24 md:pt-40`).
+There are two accounts on the site. `tumeloledwaba579@gmail.com` is already an admin. The only other account is an unconfirmed test address (`sectest+1@example.com`), which should not be given admin rights.
 
-## Project detail (`src/routes/portfolio.$slug.tsx`)
-- Hero: reduce from `h-[78svh] min-h-[520px]` to `h-[68svh] min-h-[440px] md:min-h-[560px]`; headline `text-4xl md:text-7xl`.
-- Gallery: current alternating layout produces very tall stacked images on mobile — force `aspect-[4/3]` on mobile for the wide items, and stack the paired items vertically on mobile with a smaller `aspect-[4/5]`.
-- Add `decoding="async"` to all `<img>`.
-- Meta grid: `grid-cols-2 md:grid-cols-4` so labels don't stack into a tall column on mobile.
+So there's no real account left to promote right now. Instead of a one-off grant, the useful thing is a way for you to grant or revoke admin yourself, any time, for anyone who signs up.
 
-## Responsive image loading (global pattern)
-For each large `<img>`, add:
-- `sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 1200px"` (adjusted per usage)
-- `loading="lazy"` everywhere except the LCP hero images (which get `fetchpriority="high"`)
-- `decoding="async"`
+## What gets built
 
-Uploaded images through Supabase storage are single-size, so we can't generate a true `srcset`. The wins here come from correct `sizes`/`loading`/`decoding` hints, tighter aspect ratios, and reduced heights — the browser will still download the single source but render efficiently, and CDN caching handles the rest. Bundled `@/assets/*` images are already optimized by Vite.
+A new **Users** tab in the admin dashboard (admins only) that lists every account on the site and lets you:
 
-## Out of scope
-- No changes to admin, auth, forms, business logic, or data.
-- No new dependencies.
-- Not regenerating source images at smaller dimensions (would require re-uploading assets).
+- See each account's email, sign-up date, whether their email is confirmed, and whether they're an admin
+- Make an account an admin
+- Remove admin from an account (with a guard so the last remaining admin can't be removed, and you can't remove your own admin rights by accident)
 
-## Verification
-- Load `/`, `/portfolio`, `/portfolio/westcliff-residence` at 375px, 768px, and 1280px via Playwright; screenshot each and confirm images no longer dominate the viewport and vertical rhythm feels balanced.
+The list only appears to signed-in admins; nobody else can see accounts or change roles.
+
+## Technical notes
+
+- New `src/lib/admin-users.functions.ts` with three server functions (`listUsers`, `grantAdmin`, `revokeAdmin`), each using `requireSupabaseAuth` and re-checking `private.has_role(uid, 'admin')` server-side before doing anything.
+- Emails and sign-up dates come from the Auth Admin API via `supabaseAdmin`, imported inside the handler with `await import(...)` so the service-role client never enters the client bundle. Role rows come from `public.user_roles`.
+- New `src/components/admin/AdminUsers.tsx` using the existing `Btn`/`Card` admin UI primitives; registered as a `users` tab in `src/routes/admin.tsx`.
+- No schema migration needed — the existing `user_roles` table and `admins manage roles` policy already cover this.
