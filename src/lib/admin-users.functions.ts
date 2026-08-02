@@ -16,6 +16,7 @@ export type AdminUser = {
   id: string;
   email: string;
   createdAt: string;
+  lastSignInAt: string | null;
   confirmed: boolean;
   isAdmin: boolean;
 };
@@ -42,6 +43,7 @@ export const listUsers = createServerFn({ method: "GET" })
         id: u.id,
         email: u.email ?? "(no email)",
         createdAt: u.created_at,
+        lastSignInAt: u.last_sign_in_at ?? null,
         confirmed: !!u.email_confirmed_at,
         isAdmin: adminIds.has(u.id),
       }))
