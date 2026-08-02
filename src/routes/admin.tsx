@@ -75,6 +75,7 @@ function AdminPage() {
     { id: "testimonials", label: "Testimonials" },
     { id: "contact", label: "Contact info" },
     { id: "inquiries", label: "Inquiries" },
+    { id: "users", label: "Users" },
   ];
 
 
