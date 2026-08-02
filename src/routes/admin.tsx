@@ -21,7 +21,7 @@ type Tab = "pages" | "projects" | "services" | "testimonials" | "contact" | "inq
 
 function AdminPage() {
   const nav = useNavigate();
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, refreshRole } = useAuth();
   const [tab, setTab] = useState<Tab>("pages");
   const [grantMsg, setGrantMsg] = useState<string | null>(null);
 
@@ -54,7 +54,7 @@ function AdminPage() {
             }
             const { error } = await supabase.from("user_roles").insert({ user_id: user.id, role: "admin" });
             if (error) setGrantMsg(error.message);
-            else window.location.reload();
+            else await refreshRole();
           }}
           className="mt-6 rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background">
           Claim admin access
