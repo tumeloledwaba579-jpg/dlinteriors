@@ -17,7 +17,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "pages" | "projects" | "services" | "testimonials" | "contact" | "inquiries";
+type Tab = "pages" | "projects" | "services" | "testimonials" | "contact" | "inquiries" | "users";
 
 function AdminPage() {
   const nav = useNavigate();
