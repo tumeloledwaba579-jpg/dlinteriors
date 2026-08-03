@@ -1,8 +1,10 @@
-# Missing account in the Users tab
+# Account page + why the new sign-ups look missing
 
-## What the database actually shows
+## What the records actually show
 
-There are 4 accounts on the site right now:
+Every account on the site signed up with **email and password**. There are no Apple or Google identities in Auth at all — social sign-in has never been enabled on this site, so an Apple sign-in could not have created an account here.
+
+The 4 accounts that exist:
 
 | Email | Signed up | Email confirmed | Last sign-in |
 | --- | --- | --- | --- |
@@ -11,18 +13,35 @@ There are 4 accounts on the site right now:
 | manamerican23@gmail.com | 2 Aug | No | Never |
 | dineodledwaba@gmail.com | 2 Aug | No | Never |
 
-Two real new accounts were created yesterday (2 Aug). Neither has ever completed a sign-in, and neither has confirmed their email — Auth has no sign-in record for them, so "signed in yesterday" was most likely a sign-up that stopped at the confirmation email.
+The two real accounts from 2 Aug do exist in the database — so "never signed in" is accurate: they created an account but never confirmed the email, so Auth has no sign-in for them. Whether the Users tab is failing to display them still needs checking against the live page rather than assumed.
 
-The Users tab is built to list every account regardless of confirmation, so those rows should already be visible. I have not yet confirmed what the tab actually renders, so the first step is to check that rather than guess.
+There is also a real broken link: the header sends non-admin signed-in users to `/account`, but no such route exists.
 
-## Plan
+## What gets built
 
-1. Load the admin Users tab in the live preview while signed in as the admin and compare what it renders against the 4 accounts above. Capture any error the accounts request returns.
-2. If the rows are missing, fix the cause found in step 1 (most likely candidates: the accounts request erroring and the table keeping stale data, or the published site running an older build than the preview).
-3. If all 4 rows are already present, the account is there — it just hasn't confirmed its email. In that case make that state obvious in the tab: show "Unconfirmed — hasn't signed in yet" clearly, and add a "Resend confirmation email" action per unconfirmed account so you can get them through the door.
+**1. Account page (`/account`)**
+
+A simple page any signed-in user can reach from the header's "Account" button, showing:
+
+- Email address, and whether it's confirmed
+- Phone number (if set)
+- Sign-in method (email / Apple / Google)
+- Date joined and last sign-in
+- Sign out
+
+Editable: phone number and display name, saved to their own account. Email stays read-only for now (changing it needs a confirmation flow).
+
+**2. Users tab check and fix**
+
+Load the admin Users tab live and compare it against the 4 accounts above. If rows are missing, fix that cause; if they are all present, make the unconfirmed state read clearly ("Signed up, email not confirmed") and add a "Resend confirmation email" action per account so you can get them in.
+
+## Open question
+
+Do you want Apple/Google sign-in actually enabled on the site? It isn't today. If yes, that's a separate addition and I'd add it alongside email login on the sign-in page.
 
 ## Technical notes
 
-- Verification uses Playwright against the preview with the injected admin session, reading the `listUsers` response and any console error.
-- Any fix stays in `src/lib/admin-users.functions.ts` and `src/components/admin/AdminUsers.tsx`; the resend action would be a new admin-guarded server function using the Auth admin API.
-- No schema migration is expected.
+- New public-facing route `src/routes/account.tsx`, gated client-side on the existing `useAuth` hook, redirecting to `/login` when signed out.
+- Profile fields (display name, phone) stored in user metadata via `supabase.auth.updateUser` — no new table needed for this small set.
+- Users-tab work stays in `src/lib/admin-users.functions.ts` and `src/components/admin/AdminUsers.tsx`; resend uses the Auth admin API behind the existing admin guard.
+- Route gets its own head() metadata with `noindex`.
