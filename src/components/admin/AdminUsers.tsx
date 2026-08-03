@@ -1,14 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { listUsers, grantAdmin, revokeAdmin, type AdminUser } from "@/lib/admin-users.functions";
+import { listUsers, grantAdmin, revokeAdmin, resendConfirmation, type AdminUser } from "@/lib/admin-users.functions";
 import { Btn, Card } from "./ui";
 
 const POLL_MS = 20000;
+
+const PROVIDER_LABELS: Record<string, string> = {
+  email: "Email",
+  google: "Google",
+  apple: "Apple",
+};
 
 export function AdminUsers() {
   const fetchUsers = useServerFn(listUsers);
   const grant = useServerFn(grantAdmin);
   const revoke = useServerFn(revokeAdmin);
+  const resend = useServerFn(resendConfirmation);
+
 
   const [users, setUsers] = useState<AdminUser[] | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
