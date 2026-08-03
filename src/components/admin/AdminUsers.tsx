@@ -20,6 +20,8 @@ export function AdminUsers() {
 
   const [users, setUsers] = useState<AdminUser[] | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
   const [busyId, setBusyId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
