@@ -67,14 +67,25 @@ export function AdminUsers() {
     } finally { setBusyId(null); }
   };
 
+  const doResend = async (u: AdminUser) => {
+    setBusyId(u.id); setMsg(null); setNotice(null);
+    try {
+      await resend({ data: { email: u.email } });
+      setNotice(`Confirmation email sent to ${u.email}.`);
+    } catch (err: any) {
+      setMsg(err.message ?? "Could not send the confirmation email.");
+    } finally { setBusyId(null); }
+  };
+
   if (!users) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
   return (
-    <div className="space-y-4 max-w-4xl">
+    <div className="space-y-4 max-w-5xl">
       {msg && <p className="text-sm text-destructive" role="alert">{msg}</p>}
+      {notice && <p className="text-sm text-muted-foreground" role="status" aria-live="polite">{notice}</p>}
       <div className="flex items-center justify-between gap-4">
         <p className="text-xs text-muted-foreground" role="status" aria-live="polite">
-          {updatedAt ? `Updated ${updatedAt.toLocaleTimeString()}` : ""}
+          {updatedAt ? `${users.length} account${users.length === 1 ? "" : "s"} · updated ${updatedAt.toLocaleTimeString()}` : ""}
         </p>
         <Btn disabled={refreshing} onClick={() => load()}>
           {refreshing ? "Refreshing…" : "Refresh"}
@@ -85,6 +96,7 @@ export function AdminUsers() {
           <thead>
             <tr className="text-left border-b border-border">
               <th className="pb-3 eyebrow font-normal">Email</th>
+              <th className="pb-3 eyebrow font-normal">Signed up with</th>
               <th className="pb-3 eyebrow font-normal">Joined</th>
               <th className="pb-3 eyebrow font-normal">Last sign in</th>
               <th className="pb-3 eyebrow font-normal">Status</th>
@@ -93,16 +105,30 @@ export function AdminUsers() {
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b border-border/60 last:border-0">
+              <tr key={u.id} className="border-b border-border/60 last:border-0 align-top">
                 <td className="py-3 pr-4 break-all">{u.email}</td>
+                <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">
+                  {u.providers.length
+                    ? u.providers.map((p) => PROVIDER_LABELS[p] ?? p).join(", ")
+                    : "—"}
+                </td>
                 <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">
                   {new Date(u.createdAt).toLocaleDateString()}
                 </td>
                 <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">
-                  {u.lastSignInAt ? new Date(u.lastSignInAt).toLocaleString() : "—"}
+                  {u.lastSignInAt ? new Date(u.lastSignInAt).toLocaleString() : "Never signed in"}
                 </td>
                 <td className="py-3 pr-4 text-muted-foreground">
-                  {u.confirmed ? "Confirmed" : "Unconfirmed"}
+                  {u.confirmed ? (
+                    "Confirmed"
+                  ) : (
+                    <div className="space-y-2">
+                      <span className="block">Signed up, email not confirmed</span>
+                      <Btn disabled={busyId === u.id} onClick={() => doResend(u)}>
+                        {busyId === u.id ? "…" : "Resend confirmation"}
+                      </Btn>
+                    </div>
+                  )}
                 </td>
                 <td className="py-3 text-right">
                   {u.isAdmin ? (
@@ -124,8 +150,9 @@ export function AdminUsers() {
         </table>
       </Card>
       <p className="text-xs text-muted-foreground">
-        The list refreshes automatically, so new sign-ups and sign-ins appear here on their own. There must always be at least one admin.
+        The list refreshes automatically, so new sign-ups and sign-ins appear here on their own. Accounts that haven't confirmed their email can't sign in yet. There must always be at least one admin.
       </p>
+
     </div>
   );
 }
