@@ -19,6 +19,7 @@ export type AdminUser = {
   lastSignInAt: string | null;
   confirmed: boolean;
   isAdmin: boolean;
+  providers: string[];
 };
 
 export const listUsers = createServerFn({ method: "GET" })
@@ -46,9 +47,25 @@ export const listUsers = createServerFn({ method: "GET" })
         lastSignInAt: u.last_sign_in_at ?? null,
         confirmed: !!u.email_confirmed_at,
         isAdmin: adminIds.has(u.id),
+        providers: (u.identities ?? []).map((i) => i.provider),
       }))
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   });
+
+export const resendConfirmation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { email: string }) => {
+    if (!input?.email || typeof input.email !== "string") throw new Error("email is required");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as any);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.resend({ type: "signup", email: data.email });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 
 export const grantAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
