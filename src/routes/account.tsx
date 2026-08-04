@@ -2,6 +2,9 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useServerFn } from "@tanstack/react-start";
+import { resendOwnConfirmation } from "@/lib/account.functions";
+
 
 export const Route = createFileRoute("/account")({
   head: () => ({
@@ -31,12 +34,17 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 function AccountPage() {
   const nav = useNavigate();
   const { user, isAdmin, loading } = useAuth();
+  const resendConfirmation = useServerFn(resendOwnConfirmation);
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [resendBusy, setResendBusy] = useState(false);
+  const [resendMsg, setResendMsg] = useState<string | null>(null);
+  const [resendErr, setResendErr] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!loading && !user) nav({ to: "/login" });
