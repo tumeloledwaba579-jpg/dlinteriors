@@ -12,6 +12,29 @@ async function checkAdmin(userId: string) {
   return !!data;
 }
 
+async function ensureProfile(user: User) {
+  const { data } = await supabase
+    .from("profiles")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (data) return;
+
+  const metadata = (user.user_metadata ?? {}) as Record<string, unknown>;
+  await supabase.from("profiles").insert({
+    user_id: user.id,
+    display_name:
+      typeof metadata.full_name === "string"
+        ? metadata.full_name
+        : typeof metadata.name === "string"
+          ? metadata.name
+          : "",
+    avatar_url:
+      typeof metadata.avatar_url === "string" ? metadata.avatar_url : null,
+    phone: user.phone ?? (typeof metadata.phone === "string" ? metadata.phone : null),
+  });
+}
+
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -27,7 +50,10 @@ export function useAuth() {
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
-        const admin = await checkAdmin(s.user.id);
+        const [admin] = await Promise.all([
+          checkAdmin(s.user.id),
+          ensureProfile(s.user),
+        ]);
         if (!active) return;
         setIsAdmin(admin);
       } else {

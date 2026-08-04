@@ -172,7 +172,7 @@ function AccountPage() {
           <h2 className="eyebrow">Sign-in details</h2>
           <div className="mt-4">
             <Row label="Email" value={user.email ?? "—"} />
-            <Row label="Phone" value={user.phone ?? phone || "—"} />
+            <Row label="Phone" value={(user.phone ?? phone) || "—"} />
             <Row
               label="Email status"
               value={

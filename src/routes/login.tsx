@@ -6,7 +6,15 @@ import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Admin Login — dl interiors" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Sign in — dl interiors" },
+    { name: "description", content: "Sign in to your dl interiors account using email, Google, Apple, or phone." },
+    { property: "og:title", content: "Sign in — dl interiors" },
+    { property: "og:description", content: "Access your dl interiors account securely." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: LoginPage,
 });
 
