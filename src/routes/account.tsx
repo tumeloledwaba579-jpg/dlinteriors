@@ -96,7 +96,7 @@ function AccountPage() {
     setResendMsg(null);
     setResendErr(null);
     try {
-      await resendConfirmation({ data: {} });
+      await resendConfirmation();
       setResendMsg("Verification email sent — check your inbox.");
     } catch (e: any) {
       setResendErr(e?.message ?? "Could not resend the email. Try again in a moment.");
