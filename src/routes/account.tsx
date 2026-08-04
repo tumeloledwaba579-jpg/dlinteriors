@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
 import { resendOwnConfirmation } from "@/lib/account.functions";
+import { Button } from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/account")({
@@ -52,13 +53,13 @@ function AccountPage() {
 
   useEffect(() => {
     if (!user) return;
-    const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
-    setFullName(typeof meta.full_name === "string" ? meta.full_name : "");
-    setPhone(
-      typeof meta.phone === "string" && meta.phone
-        ? meta.phone
-        : user.phone ?? "",
-    );
+    const loadProfile = async () => {
+      const { data } = await supabase.from("profiles").select("display_name,phone").eq("user_id", user.id).maybeSingle();
+      const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+      setFullName(data?.display_name || (typeof meta.full_name === "string" ? meta.full_name : ""));
+      setPhone(data?.phone || user.phone || (typeof meta.phone === "string" ? meta.phone : ""));
+    };
+    void loadProfile();
   }, [user]);
 
   if (loading || !user) {
@@ -78,9 +79,7 @@ function AccountPage() {
     setBusy(true);
     setMsg(null);
     setErr(null);
-    const { error } = await supabase.auth.updateUser({
-      data: { full_name: fullName.trim(), phone: phone.trim() },
-    });
+    const { error } = await supabase.from("profiles").upsert({ user_id: user.id, display_name: fullName.trim(), phone: phone.trim() || null }, { onConflict: "user_id" });
     if (error) setErr(error.message);
     else setMsg("Details saved.");
     setBusy(false);
@@ -133,7 +132,7 @@ function AccountPage() {
           </div>
         </header>
 
-        {!user.email_confirmed_at && (
+        {user.email && !user.email_confirmed_at && (
           <div
             className="mt-6 border border-destructive/30 bg-destructive/5 p-6"
             role="alert"
@@ -173,6 +172,7 @@ function AccountPage() {
           <h2 className="eyebrow">Sign-in details</h2>
           <div className="mt-4">
             <Row label="Email" value={user.email ?? "—"} />
+            <Row label="Phone" value={(user.phone ?? phone) || "—"} />
             <Row
               label="Email status"
               value={
@@ -243,13 +243,13 @@ function AccountPage() {
                 {msg}
               </p>
             )}
-            <button
+            <Button
               type="submit"
               disabled={busy}
               className="rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
             >
               {busy ? "Saving…" : "Save details"}
-            </button>
+            </Button>
             <p className="text-xs text-muted-foreground">
               Your email address can't be changed here — contact the studio if
               it needs updating.
