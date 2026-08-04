@@ -133,7 +133,43 @@ function AccountPage() {
           </div>
         </header>
 
+        {!user.email_confirmed_at && (
+          <div
+            className="mt-6 border border-destructive/30 bg-destructive/5 p-6"
+            role="alert"
+          >
+            <p className="eyebrow text-destructive">Verify your email</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Your email address hasn't been confirmed yet. Please check your
+              inbox for the verification link, or resend it below.
+            </p>
+            <button
+              type="button"
+              onClick={handleResendConfirmation}
+              disabled={resendBusy}
+              className="mt-4 rounded-full border border-foreground/80 px-5 py-2 text-xs uppercase tracking-[0.18em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+            >
+              {resendBusy ? "Sending…" : "Resend verification email"}
+            </button>
+            {resendMsg && (
+              <p
+                className="mt-3 text-xs text-muted-foreground"
+                role="status"
+                aria-live="polite"
+              >
+                {resendMsg}
+              </p>
+            )}
+            {resendErr && (
+              <p className="mt-3 text-xs text-destructive" role="alert">
+                {resendErr}
+              </p>
+            )}
+          </div>
+        )}
+
         <section className="mt-10 border border-border bg-card p-8">
+
           <h2 className="eyebrow">Sign-in details</h2>
           <div className="mt-4">
             <Row label="Email" value={user.email ?? "—"} />
