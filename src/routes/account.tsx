@@ -91,6 +91,21 @@ function AccountPage() {
     nav({ to: "/" });
   };
 
+  const handleResendConfirmation = async () => {
+    setResendBusy(true);
+    setResendMsg(null);
+    setResendErr(null);
+    try {
+      await resendConfirmation({ data: {} });
+      setResendMsg("Verification email sent — check your inbox.");
+    } catch (e: any) {
+      setResendErr(e?.message ?? "Could not resend the email. Try again in a moment.");
+    } finally {
+      setResendBusy(false);
+    }
+  };
+
+
   return (
     <div className="min-h-dvh bg-background px-6 pt-32 pb-24">
       <div className="mx-auto max-w-2xl">
