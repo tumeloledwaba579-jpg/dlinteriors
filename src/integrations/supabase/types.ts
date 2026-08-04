@@ -211,16 +211,19 @@ export type Database = {
       site_content: {
         Row: {
           data: Json
+          published: boolean
           section: string
           updated_at: string
         }
         Insert: {
           data?: Json
+          published?: boolean
           section: string
           updated_at?: string
         }
         Update: {
           data?: Json
+          published?: boolean
           section?: string
           updated_at?: string
         }
