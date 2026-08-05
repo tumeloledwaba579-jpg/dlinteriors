@@ -45,16 +45,17 @@ function AdminPage() {
         <button
           onClick={async () => {
             setGrantMsg(null);
-            // Check if any admin exists
-            const { count } = await supabase
-              .from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin");
-            if ((count ?? 0) > 0) {
-              setGrantMsg("An admin already exists. Ask them to grant you access.");
-              return;
-            }
+            // The database only allows this insert when no admin exists yet.
             const { error } = await supabase.from("user_roles").insert({ user_id: user.id, role: "admin" });
-            if (error) setGrantMsg(error.message);
-            else await refreshRole();
+            if (error) {
+              setGrantMsg(
+                /row-level security/i.test(error.message)
+                  ? "An admin already exists. Ask them to grant you access."
+                  : error.message,
+              );
+            } else {
+              await refreshRole();
+            }
           }}
           className="mt-6 rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background">
           Claim admin access
