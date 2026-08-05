@@ -321,7 +321,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      admin_exists: { Args: never; Returns: boolean }
+      [_ in never]: never
     }
     Enums: {
       app_role: "admin"
