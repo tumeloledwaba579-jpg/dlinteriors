@@ -66,7 +66,7 @@ export function Header() {
 
         <div className="hidden md:flex items-center gap-3">
           <Link
-            to={user ? (isAdmin ? "/admin" : "/admin") : "/login"}
+            to={user ? (isAdmin ? "/admin" : "/account") : "/login"}
             className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 focus-visible:ring-offset-background"
           >
             {user ? (isAdmin ? "Admin" : "Account") : "Sign in"}
