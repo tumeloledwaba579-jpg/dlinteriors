@@ -21,53 +21,20 @@ type Tab = "pages" | "projects" | "services" | "testimonials" | "contact" | "inq
 
 function AdminPage() {
   const nav = useNavigate();
-  const { user, isAdmin, loading, refreshRole } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const [tab, setTab] = useState<Tab>("pages");
-  const [grantMsg, setGrantMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading && !user) nav({ to: "/login" });
-  }, [user, loading, nav]);
+    if (loading) return;
+    if (!user) nav({ to: "/login" });
+    // Non-admins get no hint that this area exists.
+    else if (!isAdmin) nav({ to: "/account", replace: true });
+  }, [user, isAdmin, loading, nav]);
 
-  if (loading || !user) {
+  if (loading || !user || !isAdmin) {
     return <div className="min-h-screen flex items-center justify-center pt-32">Loading…</div>;
   }
 
-  // First-user bootstrap: if there are no admins yet, allow self-grant
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen pt-40 px-6 max-w-2xl mx-auto">
-        <p className="eyebrow">Admin access required</p>
-        <h1 className="mt-3 font-serif text-4xl">You're signed in, but not an admin.</h1>
-        <p className="mt-4 text-sm text-muted-foreground">
-          If this is the first account on the studio, claim admin access below. Otherwise an existing admin must grant you the role.
-        </p>
-        <button
-          onClick={async () => {
-            setGrantMsg(null);
-            // The database only allows this insert when no admin exists yet.
-            const { error } = await supabase.from("user_roles").insert({ user_id: user.id, role: "admin" });
-            if (error) {
-              setGrantMsg(
-                /row-level security/i.test(error.message)
-                  ? "An admin already exists. Ask them to grant you access."
-                  : error.message,
-              );
-            } else {
-              await refreshRole();
-            }
-          }}
-          className="mt-6 rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background">
-          Claim admin access
-        </button>
-        {grantMsg && <p className="mt-4 text-sm text-destructive">{grantMsg}</p>}
-        <div className="mt-10">
-          <button onClick={async () => { await supabase.auth.signOut(); nav({ to: "/login" }); }}
-            className="text-xs text-muted-foreground hover:text-foreground">Sign out</button>
-        </div>
-      </div>
-    );
-  }
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "pages", label: "Pages" },
