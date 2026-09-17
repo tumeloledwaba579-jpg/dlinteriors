@@ -122,6 +122,20 @@ function AccountPage() {
     }
   };
 
+  const submitAccessRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAccessBusy(true);
+    setAccessErr(null);
+    try {
+      const res = await askForAccess({ data: { reason: accessReason } });
+      setAccessStatus(res.status === "approved" ? "approved" : "pending");
+    } catch (e: any) {
+      setAccessErr(e?.message ?? "Could not send your request. Try again in a moment.");
+    } finally {
+      setAccessBusy(false);
+    }
+  };
+
 
   return (
     <div className="min-h-dvh bg-background px-6 pt-32 pb-24">
