@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
 import { resendOwnConfirmation } from "@/lib/account.functions";
+import { requestAdminAccess, myAdminAccessRequest } from "@/lib/admin-access.functions";
 import { Button } from "@/components/ui/button";
 
 
@@ -36,6 +37,14 @@ function AccountPage() {
   const nav = useNavigate();
   const { user, isAdmin, loading } = useAuth();
   const resendConfirmation = useServerFn(resendOwnConfirmation);
+  const askForAccess = useServerFn(requestAdminAccess);
+  const loadMyRequest = useServerFn(myAdminAccessRequest);
+
+  const [accessReason, setAccessReason] = useState("");
+  const [accessBusy, setAccessBusy] = useState(false);
+  const [accessErr, setAccessErr] = useState<string | null>(null);
+  const [accessStatus, setAccessStatus] = useState<"none" | "pending" | "approved" | "denied">("none");
+
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -61,6 +70,15 @@ function AccountPage() {
     };
     void loadProfile();
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    loadMyRequest()
+      .then((r) => { if (active) setAccessStatus(r ? r.status : "none"); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [user, loadMyRequest]);
 
   if (loading || !user) {
     return (
@@ -101,6 +119,20 @@ function AccountPage() {
       setResendErr(e?.message ?? "Could not resend the email. Try again in a moment.");
     } finally {
       setResendBusy(false);
+    }
+  };
+
+  const submitAccessRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAccessBusy(true);
+    setAccessErr(null);
+    try {
+      const res = await askForAccess({ data: { reason: accessReason } });
+      setAccessStatus(res.status === "approved" ? "approved" : "pending");
+    } catch (e: any) {
+      setAccessErr(e?.message ?? "Could not send your request. Try again in a moment.");
+    } finally {
+      setAccessBusy(false);
     }
   };
 
@@ -198,6 +230,52 @@ function AccountPage() {
             <Row label="Role" value={isAdmin ? "Administrator" : "Member"} />
           </div>
         </section>
+
+        {!isAdmin && (
+          <section className="mt-6 border border-border bg-card p-8">
+            <h2 className="eyebrow">Studio access</h2>
+            {accessStatus === "pending" ? (
+              <p className="mt-3 text-sm text-muted-foreground" role="status">
+                Your request is with the studio owner. You'll get access here as soon as it's approved.
+              </p>
+            ) : accessStatus === "approved" ? (
+              <p className="mt-3 text-sm text-muted-foreground" role="status">
+                Your request was approved. Sign out and back in to see the studio tools.
+              </p>
+            ) : (
+              <form onSubmit={submitAccessRequest} className="mt-3 space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  {accessStatus === "denied"
+                    ? "Your previous request wasn't approved. You can ask again below."
+                    : "Need to manage the site's content? Ask the studio owner for access."}
+                </p>
+                <div>
+                  <label htmlFor="acct-reason" className="eyebrow block">
+                    Why do you need access? (optional)
+                  </label>
+                  <textarea
+                    id="acct-reason"
+                    rows={3}
+                    maxLength={1000}
+                    value={accessReason}
+                    onChange={(e) => setAccessReason(e.target.value)}
+                    className="mt-2 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                  />
+                </div>
+                {accessErr && (
+                  <p className="text-xs text-destructive" role="alert">{accessErr}</p>
+                )}
+                <Button
+                  type="submit"
+                  disabled={accessBusy}
+                  className="rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background disabled:opacity-50"
+                >
+                  {accessBusy ? "Sending…" : "Request access"}
+                </Button>
+              </form>
+            )}
+          </section>
+        )}
 
         <section className="mt-6 border border-border bg-card p-8">
           <h2 className="eyebrow">Your details</h2>

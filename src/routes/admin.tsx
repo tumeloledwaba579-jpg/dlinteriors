@@ -9,6 +9,17 @@ import { AdminContact } from "@/components/admin/AdminContact";
 import { AdminPages } from "@/components/admin/AdminPages";
 import { AdminInquiries } from "@/components/admin/AdminInquiries";
 import { AdminUsers } from "@/components/admin/AdminUsers";
+import { useAccessRequests } from "@/components/admin/AdminAccessRequests";
+
+function PendingBadge() {
+  const { pending } = useAccessRequests();
+  if (!pending.length) return null;
+  return (
+    <span className="ml-2 rounded-full bg-foreground px-2 py-0.5 text-[10px] text-background">
+      {pending.length}
+    </span>
+  );
+}
 
 
 
@@ -69,6 +80,7 @@ function AdminPage() {
                 tab === t.id ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
               }`}>
               {t.label}
+              {t.id === "users" && <PendingBadge />}
             </button>
           ))}
         </nav>
