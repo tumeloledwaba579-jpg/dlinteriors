@@ -80,6 +80,7 @@ function AdminPage() {
                 tab === t.id ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
               }`}>
               {t.label}
+              {t.id === "users" && <PendingBadge />}
             </button>
           ))}
         </nav>
