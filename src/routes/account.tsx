@@ -231,6 +231,52 @@ function AccountPage() {
           </div>
         </section>
 
+        {!isAdmin && (
+          <section className="mt-6 border border-border bg-card p-8">
+            <h2 className="eyebrow">Studio access</h2>
+            {accessStatus === "pending" ? (
+              <p className="mt-3 text-sm text-muted-foreground" role="status">
+                Your request is with the studio owner. You'll get access here as soon as it's approved.
+              </p>
+            ) : accessStatus === "approved" ? (
+              <p className="mt-3 text-sm text-muted-foreground" role="status">
+                Your request was approved. Sign out and back in to see the studio tools.
+              </p>
+            ) : (
+              <form onSubmit={submitAccessRequest} className="mt-3 space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  {accessStatus === "denied"
+                    ? "Your previous request wasn't approved. You can ask again below."
+                    : "Need to manage the site's content? Ask the studio owner for access."}
+                </p>
+                <div>
+                  <label htmlFor="acct-reason" className="eyebrow block">
+                    Why do you need access? (optional)
+                  </label>
+                  <textarea
+                    id="acct-reason"
+                    rows={3}
+                    maxLength={1000}
+                    value={accessReason}
+                    onChange={(e) => setAccessReason(e.target.value)}
+                    className="mt-2 w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                  />
+                </div>
+                {accessErr && (
+                  <p className="text-xs text-destructive" role="alert">{accessErr}</p>
+                )}
+                <Button
+                  type="submit"
+                  disabled={accessBusy}
+                  className="rounded-full bg-foreground px-6 py-3 text-xs uppercase tracking-[0.2em] text-background disabled:opacity-50"
+                >
+                  {accessBusy ? "Sending…" : "Request access"}
+                </Button>
+              </form>
+            )}
+          </section>
+        )}
+
         <section className="mt-6 border border-border bg-card p-8">
           <h2 className="eyebrow">Your details</h2>
           <form onSubmit={save} className="mt-5 space-y-5">
