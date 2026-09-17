@@ -37,6 +37,14 @@ function AccountPage() {
   const nav = useNavigate();
   const { user, isAdmin, loading } = useAuth();
   const resendConfirmation = useServerFn(resendOwnConfirmation);
+  const askForAccess = useServerFn(requestAdminAccess);
+  const loadMyRequest = useServerFn(myAdminAccessRequest);
+
+  const [accessReason, setAccessReason] = useState("");
+  const [accessBusy, setAccessBusy] = useState(false);
+  const [accessErr, setAccessErr] = useState<string | null>(null);
+  const [accessStatus, setAccessStatus] = useState<"none" | "pending" | "approved" | "denied">("none");
+
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -62,6 +70,15 @@ function AccountPage() {
     };
     void loadProfile();
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    loadMyRequest()
+      .then((r) => { if (active) setAccessStatus(r ? r.status : "none"); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [user, loadMyRequest]);
 
   if (loading || !user) {
     return (
