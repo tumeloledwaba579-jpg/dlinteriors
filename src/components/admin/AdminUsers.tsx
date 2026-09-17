@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { listUsers, grantAdmin, revokeAdmin, resendConfirmation, type AdminUser } from "@/lib/admin-users.functions";
 import { Btn, Card } from "./ui";
+import { AdminAccessRequests } from "./AdminAccessRequests";
 
 const POLL_MS = 20000;
 
@@ -83,6 +84,7 @@ export function AdminUsers() {
 
   return (
     <div className="space-y-4 max-w-5xl">
+      <AdminAccessRequests onChanged={() => load({ silent: true })} />
       {msg && <p className="text-sm text-destructive" role="alert">{msg}</p>}
       {notice && <p className="text-sm text-muted-foreground" role="status" aria-live="polite">{notice}</p>}
       <div className="flex items-center justify-between gap-4">
