@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
 import { resendOwnConfirmation } from "@/lib/account.functions";
+import { requestAdminAccess, myAdminAccessRequest } from "@/lib/admin-access.functions";
 import { Button } from "@/components/ui/button";
 
 
