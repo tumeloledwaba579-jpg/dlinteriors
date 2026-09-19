@@ -57,11 +57,18 @@ function LoginPage() {
 
   const socialSignIn = async (provider: "google" | "apple") => {
     setBusy(true); setMsg(null);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${window.location.origin}/login` },
-    });
-    if (error) { setMsg(error.message ?? `${provider === "apple" ? "Apple" : "Google"} sign-in failed`); setBusy(false); return; }
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: `${window.location.origin}/login` },
+      });
+      if (error) { setMsg(error.message ?? `${provider === "apple" ? "Apple" : "Google"} sign-in failed`); setBusy(false); }
+      // On success the browser is redirected away to the provider, so we
+      // deliberately leave `busy` true here rather than resetting it.
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : `${provider === "apple" ? "Apple" : "Google"} sign-in failed`);
+      setBusy(false);
+    }
   };
 
   const submitPhone = async (e: React.FormEvent) => {
