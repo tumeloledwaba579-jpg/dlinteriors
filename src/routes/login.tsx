@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/login")({
@@ -58,10 +57,11 @@ function LoginPage() {
 
   const socialSignIn = async (provider: "google" | "apple") => {
     setBusy(true); setMsg(null);
-    const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
-    if (result.error) { setMsg(result.error.message ?? `${provider === "apple" ? "Apple" : "Google"} sign-in failed`); setBusy(false); return; }
-    if (result.redirected) return;
-    nav({ to: "/admin" });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/login` },
+    });
+    if (error) { setMsg(error.message ?? `${provider === "apple" ? "Apple" : "Google"} sign-in failed`); setBusy(false); return; }
   };
 
   const submitPhone = async (e: React.FormEvent) => {
