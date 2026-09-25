@@ -118,6 +118,9 @@ export type Database = {
           id: string
           phone: string | null
           preferences: Json
+          premium_expires_at: string | null
+          premium_since: string | null
+          subscription_tier: string
           updated_at: string
           user_id: string
         }
@@ -128,6 +131,9 @@ export type Database = {
           id?: string
           phone?: string | null
           preferences?: Json
+          premium_expires_at?: string | null
+          premium_since?: string | null
+          subscription_tier?: string
           updated_at?: string
           user_id: string
         }
@@ -138,6 +144,9 @@ export type Database = {
           id?: string
           phone?: string | null
           preferences?: Json
+          premium_expires_at?: string | null
+          premium_since?: string | null
+          subscription_tier?: string
           updated_at?: string
           user_id?: string
         }
