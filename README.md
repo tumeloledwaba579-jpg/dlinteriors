@@ -1,5 +1,11 @@
 # Design Haven Studio
 
+> **New to this project?** Start with [`docs/EDITING-CONTENT.md`](docs/EDITING-CONTENT.md)
+> to change what's on the site without touching code, and
+> [`docs/PITFALLS.md`](docs/PITFALLS.md) if something looks broken —
+> there's a good chance it's already happened once before and is
+> documented there with the fix.
+
 Interior Design Website Build Prompt for Lovable
 
 Project Overview

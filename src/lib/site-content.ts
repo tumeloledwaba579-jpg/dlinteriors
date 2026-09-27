@@ -12,7 +12,7 @@ import office from "@/assets/project-office.jpg";
 export type CategoryItem = { title: string; tag: string; image: string };
 export type ServiceTeaser = { title: string; body: string };
 export type ProcessStep = { title: string; body: string };
-export type ServiceCard = { icon: string; title: string; body: string; for: string; from: string };
+export type ServiceCard = { icon: string; title: string; body: string; for: string; investment: string };
 export type Phase = { phase: string; duration: string };
 export type NextStep = { label: string };
 
@@ -31,8 +31,6 @@ export type SiteContent = {
     titleItalic: string;
     tagline: string;
     primaryCta: string;
-    phoneLabel: string;
-    phoneTel: string;
     image: string;
   };
   "home.profile": {
@@ -65,8 +63,6 @@ export type SiteContent = {
     headingItalic: string;
     body: string;
     primaryCta: string;
-    phoneLabel: string;
-    phoneTel: string;
   };
   "about.intro": {
     eyebrow: string;
@@ -149,8 +145,6 @@ export const DEFAULTS: SiteContent = {
     titleItalic: "interiors",
     tagline: "Residential · Corporate · Hospitality · Retail",
     primaryCta: "Get in touch",
-    phoneLabel: "011 447 6016",
-    phoneTel: "+27114476016",
     image: hero,
   },
   "home.profile": {
@@ -205,8 +199,6 @@ export const DEFAULTS: SiteContent = {
     headingItalic: "conversation.",
     body: "Tell us about your project — residential, corporate or hospitality — and we'll be in touch within a day.",
     primaryCta: "Contact the studio",
-    phoneLabel: "011 447 6016",
-    phoneTel: "+27114476016",
   },
   "about.intro": {
     eyebrow: "About the studio",
@@ -260,12 +252,12 @@ export const DEFAULTS: SiteContent = {
   },
   "services.cards": {
     items: [
-      { icon: "Home", title: "Full Interior Design", body: "End-to-end design from concept through procurement to install day — typically for new homes, full renovations or complete refurnishings.", for: "Homeowners taking on a whole house or major renovation.", from: "From R85,000" },
-      { icon: "Layout", title: "Space Planning & Layout", body: "Floor plans, joinery design and furniture layouts that resolve how rooms actually work — flow, function, light, and proportion.", for: "Renovations, extensions or rooms that simply don't sit right.", from: "From R18,000" },
-      { icon: "Sparkles", title: "Styling & Curation", body: "We restyle existing rooms, source new pieces and curate a refreshed look using what you have alongside considered additions.", for: "Homes that need a refresh, not a renovation.", from: "From R12,000" },
-      { icon: "Palette", title: "Color & Material Consultation", body: "A focused engagement to develop a cohesive palette and material strategy across your home — paints, finishes, fabrics and timber.", for: "Clients self-managing a build who need a guiding eye.", from: "From R8,500" },
-      { icon: "Leaf", title: "Sustainably-led Design", body: "Built around durable, locally sourced and naturally derived materials — designed to last decades, not seasons.", for: "Homes built to last and tread lightly.", from: "Included in all services" },
-      { icon: "ClipboardCheck", title: "Project Management", body: "On-site coordination with contractors, joiners and suppliers — we keep the build moving and the details correct.", for: "Anyone who wants their project handed over fully resolved.", from: "Scoped per project" },
+      { icon: "Home", title: "Full Interior Design", body: "End-to-end design from concept through procurement to install day — typically for new homes, full renovations or complete refurnishings.", for: "Homeowners taking on a whole house or major renovation.", investment: "From R85,000" },
+      { icon: "Layout", title: "Space Planning & Layout", body: "Floor plans, joinery design and furniture layouts that resolve how rooms actually work — flow, function, light, and proportion.", for: "Renovations, extensions or rooms that simply don't sit right.", investment: "From R18,000" },
+      { icon: "Sparkles", title: "Styling & Curation", body: "We restyle existing rooms, source new pieces and curate a refreshed look using what you have alongside considered additions.", for: "Homes that need a refresh, not a renovation.", investment: "From R12,000" },
+      { icon: "Palette", title: "Color & Material Consultation", body: "A focused engagement to develop a cohesive palette and material strategy across your home — paints, finishes, fabrics and timber.", for: "Clients self-managing a build who need a guiding eye.", investment: "From R8,500" },
+      { icon: "Leaf", title: "Sustainably-led Design", body: "Built around durable, locally sourced and naturally derived materials — designed to last decades, not seasons.", for: "Homes built to last and tread lightly.", investment: "Included in all services" },
+      { icon: "ClipboardCheck", title: "Project Management", body: "On-site coordination with contractors, joiners and suppliers — we keep the build moving and the details correct.", for: "Anyone who wants their project handed over fully resolved.", investment: "Scoped per project" },
     ],
   },
   "services.timeline": {

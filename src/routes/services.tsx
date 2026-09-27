@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Home, Layout, Palette, Sparkles, Leaf, ClipboardCheck, type LucideIcon } from "lucide-react";
 import { useSiteContent } from "@/lib/site-content";
+import { supabase } from "@/integrations/supabase/client";
+
+// One shape for a service card, whatever it came from (the database, via
+// /admin, or the built-in placeholder copy below).
+type ServiceCardView = { icon?: string; title: string; body: string; for?: string; investment?: string };
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -24,6 +30,33 @@ function ServicesPage() {
   const timeline = useSiteContent("services.timeline");
   const cta = useSiteContent("services.cta");
 
+  // Services added/edited through /admin (AdminServices.tsx) live in the
+  // "services" table. Use them once there's at least one published row;
+  // until then, show the placeholder copy from site-content so the page
+  // isn't empty.
+  const [dbServices, setDbServices] = useState<ServiceCardView[] | null>(null);
+  useEffect(() => {
+    supabase
+      .from("services")
+      .select("title,description,investment,features")
+      .eq("published", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setDbServices(
+            data.map((d) => ({
+              title: d.title,
+              body: d.description,
+              investment: d.investment || undefined,
+              for: Array.isArray(d.features) && d.features.length > 0 ? (d.features as string[]).join(", ") : undefined,
+            }))
+          );
+        }
+      });
+  }, []);
+
+  const items: ServiceCardView[] = dbServices ?? cards.items;
+
   return (
     <div className="pt-32 md:pt-40">
       <header className="mx-auto max-w-7xl px-6">
@@ -34,8 +67,8 @@ function ServicesPage() {
 
       <section className="mx-auto mt-20 max-w-7xl px-6">
         <div className="grid gap-px overflow-hidden border border-border md:grid-cols-2 lg:grid-cols-3">
-          {cards.items.map((s, i) => {
-            const Icon = ICONS[s.icon] ?? Home;
+          {items.map((s, i) => {
+            const Icon = (s.icon ? ICONS[s.icon] : undefined) ?? Home;
             return (
               <div key={i} className="bg-background p-8 md:p-10">
                 <Icon className="text-primary" size={28} strokeWidth={1.25} />
@@ -43,7 +76,7 @@ function ServicesPage() {
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
                 <div className="mt-6 space-y-1 text-xs text-muted-foreground">
                   {s.for && <p><span className="text-foreground/70">Ideal for:</span> {s.for}</p>}
-                  {s.from && <p><span className="text-foreground/70">Investment:</span> {s.from}</p>}
+                  {s.investment && <p><span className="text-foreground/70">Investment:</span> {s.investment}</p>}
                 </div>
               </div>
             );

@@ -1,12 +1,73 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { getProject, projects } from "@/lib/projects";
+import { supabase } from "@/integrations/supabase/client";
+
+type RelatedProject = { slug: string; title: string; style: string; image: string };
 
 export const Route = createFileRoute("/portfolio/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
+    // Real projects added through /admin live in the database — check there
+    // first so anything an admin publishes actually shows up here.
+    const { data: dbProject } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+
+    if (dbProject) {
+      const { data: images } = await supabase
+        .from("project_images")
+        .select("url,sort_order")
+        .eq("project_id", dbProject.id)
+        .order("sort_order");
+      const gallery = (images ?? []).map((img) => img.url);
+
+      const { data: others } = await supabase
+        .from("projects")
+        .select("slug,title,style,cover_image")
+        .eq("published", true)
+        .neq("slug", params.slug)
+        .order("sort_order")
+        .limit(3);
+      const related: RelatedProject[] = (others ?? []).map((o) => ({
+        slug: o.slug,
+        title: o.title,
+        style: o.style,
+        image: o.cover_image ?? "",
+      }));
+
+      return {
+        project: {
+          slug: dbProject.slug,
+          title: dbProject.title,
+          location: dbProject.location,
+          space: dbProject.space,
+          style: dbProject.style,
+          year: dbProject.year,
+          image: dbProject.cover_image ?? gallery[0] ?? "",
+          challenge: dbProject.challenge,
+          solution: dbProject.solution,
+          narrative: dbProject.narrative,
+          palette: (dbProject.palette as { name: string; hex: string }[]) ?? [],
+          materials: (dbProject.materials as string[]) ?? [],
+          gallery,
+        },
+        related,
+      };
+    }
+
+    // Nothing in the database with this slug — fall back to the bundled
+    // sample projects (these exist so the portfolio page isn't empty before
+    // real work has been added; see docs/EDITING-CONTENT.md).
     const project = getProject(params.slug);
     if (!project) throw notFound();
-    return { project };
+    const related: RelatedProject[] = projects
+      .filter((p) => p.slug !== project.slug)
+      .slice(0, 3)
+      .map((p) => ({ slug: p.slug, title: p.title, style: p.style, image: p.image }));
+    return { project, related };
   },
   head: ({ loaderData, params }) => {
     const p = loaderData?.project;
@@ -60,8 +121,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
 
 
 function ProjectPage() {
-  const { project } = Route.useLoaderData();
-  const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
+  const { project, related } = Route.useLoaderData();
 
   return (
     <article className="pb-24">

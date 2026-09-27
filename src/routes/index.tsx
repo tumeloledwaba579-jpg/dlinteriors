@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Phone } from "lucide-react";
 import { useSiteContent } from "@/lib/site-content";
+import { useContactInfo } from "@/hooks/use-contact-info";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +23,8 @@ function Index() {
   const cats = useSiteContent("home.categories");
   const svc = useSiteContent("home.services");
   const cta = useSiteContent("home.contactCta");
+  const contact = useContactInfo();
+  const telHref = `tel:${contact.phone.replace(/\s+/g, "")}`;
 
   return (
     <>
@@ -38,9 +41,9 @@ function Index() {
             <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-foreground sm:px-8 sm:py-3.5">
               {hero.primaryCta}
             </Link>
-            {hero.phoneLabel && (
-              <a href={`tel:${hero.phoneTel}`} className="inline-flex items-center gap-2 rounded-full bg-background/95 px-6 py-3 text-xs uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-background sm:px-8 sm:py-3.5">
-                <Phone size={13} /> {hero.phoneLabel}
+            {contact.phone && (
+              <a href={telHref} className="inline-flex items-center gap-2 rounded-full bg-background/95 px-6 py-3 text-xs uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-background sm:px-8 sm:py-3.5">
+                <Phone size={13} /> {contact.phone}
               </a>
             )}
           </div>
@@ -144,9 +147,9 @@ function Index() {
             <Link to="/contact" className="rounded-full bg-primary px-8 py-4 text-xs uppercase tracking-[0.22em] text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
               {cta.primaryCta}
             </Link>
-            {cta.phoneLabel && (
-              <a href={`tel:${cta.phoneTel}`} className="inline-flex items-center gap-2 rounded-full border border-background/40 px-8 py-4 text-xs uppercase tracking-[0.22em] hover:bg-background hover:text-foreground transition-colors">
-                <Phone size={13} /> {cta.phoneLabel}
+            {contact.phone && (
+              <a href={telHref} className="inline-flex items-center gap-2 rounded-full border border-background/40 px-8 py-4 text-xs uppercase tracking-[0.22em] hover:bg-background hover:text-foreground transition-colors">
+                <Phone size={13} /> {contact.phone}
               </a>
             )}
           </div>

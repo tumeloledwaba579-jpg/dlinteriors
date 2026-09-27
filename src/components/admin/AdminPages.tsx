@@ -54,9 +54,8 @@ export function AdminPages() {
               <div><Label>Title (lead)</Label><Input value={d.titleLead} onChange={(e) => set({ ...d, titleLead: e.target.value })} /></div>
               <div><Label>Title (italic)</Label><Input value={d.titleItalic} onChange={(e) => set({ ...d, titleItalic: e.target.value })} /></div>
               <div><Label>Primary CTA label</Label><Input value={d.primaryCta} onChange={(e) => set({ ...d, primaryCta: e.target.value })} /></div>
-              <div><Label>Phone label (leave blank to hide)</Label><Input value={d.phoneLabel} onChange={(e) => set({ ...d, phoneLabel: e.target.value })} /></div>
-              <div><Label>Phone tel: link</Label><Input value={d.phoneTel} onChange={(e) => set({ ...d, phoneTel: e.target.value })} /></div>
               <div className="md:col-span-2"><Label>Hero image</Label><ImageUpload value={d.image} onChange={(url) => set({ ...d, image: url ?? "" })} folder="home" /></div>
+              <p className="md:col-span-2 text-xs text-muted-foreground">The phone number shown here comes from the Contact tab, so it always matches the footer and contact page.</p>
             </div>
           )} />
 
@@ -130,8 +129,7 @@ export function AdminPages() {
               <div><Label>Heading lead</Label><Input value={d.headingLead} onChange={(e) => set({ ...d, headingLead: e.target.value })} /></div>
               <div><Label>Heading italic</Label><Input value={d.headingItalic} onChange={(e) => set({ ...d, headingItalic: e.target.value })} /></div>
               <div className="md:col-span-2"><Label>Body</Label><Textarea rows={2} value={d.body} onChange={(e) => set({ ...d, body: e.target.value })} /></div>
-              <div><Label>Phone label</Label><Input value={d.phoneLabel} onChange={(e) => set({ ...d, phoneLabel: e.target.value })} /></div>
-              <div><Label>Phone tel: link</Label><Input value={d.phoneTel} onChange={(e) => set({ ...d, phoneTel: e.target.value })} /></div>
+              <p className="md:col-span-2 text-xs text-muted-foreground">The phone number shown here comes from the Contact tab, so it always matches the footer and contact page.</p>
             </div>
           )} />
         </>
@@ -209,17 +207,18 @@ export function AdminPages() {
           <SectionEditor sectionKey="services.cards" title="Service cards" render={(d, set) => (
             <div className="space-y-4">
               <p className="text-xs text-muted-foreground">Icon options: Home, Layout, Palette, Sparkles, Leaf, ClipboardCheck</p>
+              <p className="text-xs text-muted-foreground">Note: these cards only show up on the Services page while the "Services" section (in the sidebar) has no published services yet. Once you add real services there, they replace this placeholder content automatically.</p>
               <RowList
                 items={d.items}
                 onChange={(items) => set({ ...d, items })}
-                blank={{ icon: "Home", title: "", body: "", for: "", from: "" }}
+                blank={{ icon: "Home", title: "", body: "", for: "", investment: "" }}
                 render={(s, upd) => (
                   <div className="grid md:grid-cols-2 gap-3">
                     <div><Label>Icon</Label><Input value={s.icon} onChange={(e) => upd({ ...s, icon: e.target.value })} /></div>
                     <div><Label>Title</Label><Input value={s.title} onChange={(e) => upd({ ...s, title: e.target.value })} /></div>
                     <div className="md:col-span-2"><Label>Body</Label><Textarea rows={2} value={s.body} onChange={(e) => upd({ ...s, body: e.target.value })} /></div>
                     <div><Label>Ideal for</Label><Input value={s.for} onChange={(e) => upd({ ...s, for: e.target.value })} /></div>
-                    <div><Label>Investment</Label><Input value={s.from} onChange={(e) => upd({ ...s, from: e.target.value })} /></div>
+                    <div><Label>Investment</Label><Input value={s.investment} onChange={(e) => upd({ ...s, investment: e.target.value })} /></div>
                   </div>
                 )}
               />
