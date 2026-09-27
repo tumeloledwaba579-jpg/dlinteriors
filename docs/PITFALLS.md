@@ -274,3 +274,35 @@ the site as ready for the public.**
 **Avoid it:** whenever a database is rebuilt or migrated, confirm
 every piece of contact/business information against the real source
 (the business owner) rather than trusting a rebuilt default value.
+
+---
+
+## 13. The site vanished — replaced by a totally different app
+
+**Symptom:** visiting the site's URL showed an unrelated finance app
+("pocket-fintrack" — budgets, holdings, net worth), including a broken
+"This page didn't load" screen from *that* app, not this one.
+
+**Why:** `wrangler.jsonc` still had `"name": "tanstack-start-app"` — the
+unmodified default from the TanStack Start template this project was
+started from. Cloudflare Workers are identified by that `name` field;
+two unrelated projects sharing the same un-customized template default
+will deploy to **the same Worker script**. Whichever project deployed
+most recently completely replaces the other — there's no merge, no
+warning, nothing in either repo's history shows it happened.
+
+**Fix:** changed `wrangler.jsonc`'s `name` to `"dlinteriors"`, a name
+unique to this project, then redeployed. This moved the live site to
+a new URL: `https://dlinteriors.pocket-fintrack.workers.dev` (was
+`https://tanstack-start-app.pocket-fintrack.workers.dev`). Because the
+URL changed, Supabase's Site URL / Redirect URL (see entry #5) had to
+be updated to match, or sign-in would have broken the same way again.
+
+**Avoid it:** **the very first thing to check/set in any new project
+that deploys to Cloudflare Workers is a unique `name` in its wrangler
+config** — before the first real deploy, not after. If you (or anyone
+you work with) starts another project from the same starter template
+again, rename it immediately. This is also worth checking if the site
+ever "disappears" again without an obvious cause on this end — run
+`workers_list` on the Cloudflare account (or check the dashboard) and
+compare what's actually live against what you expect.
