@@ -306,3 +306,34 @@ again, rename it immediately. This is also worth checking if the site
 ever "disappears" again without an obvious cause on this end — run
 `workers_list` on the Cloudflare account (or check the dashboard) and
 compare what's actually live against what you expect.
+
+---
+
+## 14. `npm audit` shows vulnerabilities — which ones actually matter here
+
+**What `npm audit` will keep telling you:** `esbuild`, `sharp`, and
+`undici` show up as high/moderate severity, with fixes only available
+via `npm audit fix --force` (which forces breaking changes: a
+drizzle-kit downgrade, and a nitro version bump).
+
+**Why they're left as-is:** all three are **build-tool dependencies**
+(`esbuild` inside drizzle-kit; `sharp`/`undici` inside
+miniflare/wrangler's local dev emulation), not runtime dependencies —
+check with `npm ls <package>` or look at whether it's under
+`dependencies` vs pulled in transitively by a devDependency. None of
+them are bundled into the deployed Cloudflare Worker. The actual
+exposure is limited to whoever is running `npm run dev` /
+`wrangler dev` on their own machine, not to site visitors. Forcing the
+fix would bump `nitro` to a new beta version — risky, given how much
+effort went into getting the current build/deploy pipeline stable (see
+entries #2 and #13).
+
+**What was fixed:** `js-yaml` and `nanoid` — both had non-breaking
+fixes (`npm audit fix`, no `--force` needed) and were applied
+immediately.
+
+**If you see this again:** don't reach for `--force` reflexively.
+Check first whether the flagged package is a real runtime dependency
+(would end up in the deployed site) or purely a build-tool dependency
+(only runs on a developer's own machine). Only the former is worth
+risking a breaking change for.
