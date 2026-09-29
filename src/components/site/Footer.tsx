@@ -41,7 +41,11 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-6 py-6 text-xs text-muted-foreground md:flex-row">
           <p>© {new Date().getFullYear()} {b.studioMark} {b.studioName}. All rights reserved.</p>
-          <p>{b.footerCredit}</p>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-foreground">Terms of Use</Link>
+            <p>{b.footerCredit}</p>
+          </div>
         </div>
       </div>
     </footer>
