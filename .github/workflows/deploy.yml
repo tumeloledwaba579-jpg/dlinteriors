@@ -14,7 +14,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
@@ -27,4 +27,10 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Pinned exact version: the action's own "detect installed
+          # Wrangler version" probe failed under Node 20 (which GitHub was
+          # force-running on Node 24 anyway due to the Node 20 deprecation,
+          # a mismatch that likely caused the probe's output parsing to
+          # fail). Pinning skips that detection step entirely.
+          wranglerVersion: "4.147.0"
           command: deploy --config .output/server/wrangler.json
