@@ -337,3 +337,40 @@ Check first whether the flagged package is a real runtime dependency
 (would end up in the deployed site) or purely a build-tool dependency
 (only runs on a developer's own machine). Only the former is worth
 risking a breaking change for.
+
+## Every new customer was asked to "Request admin access"
+
+**Symptom:** a new person signs up and their account page shows a
+"Studio access → Request access" form.
+
+**Why:** the request-access card on `/account` was shown to every
+signed-in non-admin. But customers should never know the admin area exists
+(`/admin` already silently redirects non-admins). The feature was built
+for "someone I trust wants to help edit the site", and then put where
+every customer could see it.
+
+**Fix:** removed the card from `src/routes/account.tsx`. Admins are added
+only by the owner: put the email in the admin allow-list, or use
+**Admin → Users**. (The `admin_access_requests` table and server functions
+are still there but nothing in the UI creates requests now.)
+
+**Avoid it:** before adding a UI element to a page everyone sees, ask
+"should an ordinary customer see this?". Admin-only things belong behind
+the admin check, not on shared pages.
+
+## OAuth sign-in lands in the wrong app
+
+**Symptom:** after Google sign-in on dl interiors you end up on a
+different site (Smart Money).
+
+**Why:** after OAuth, Supabase sends the browser to the project's **Site
+URL** (or whenever the requested redirect isn't on the Redirect URLs
+allow-list). It still pointed at the old shared Worker name
+`tanstack-start-app…`, which now serves the other app.
+
+**Fix:** Supabase → Authentication → URL Configuration: set Site URL to
+`https://dlinteriors.pocket-fintrack.workers.dev` and list that origin
+under Redirect URLs.
+
+**Avoid it:** whenever a Worker is renamed or a domain added, update the
+Site URL + Redirect URLs in **that project's** Supabase dashboard.
